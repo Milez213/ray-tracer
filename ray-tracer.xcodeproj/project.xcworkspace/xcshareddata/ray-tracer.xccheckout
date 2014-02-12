@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>9EBFDB06-9CCC-44E1-BF75-F8E08BAE3EBC</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ray-tracer</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6A506874-2E98-4B2F-B23A-E6AA384C01F8</key>
+		<string>https://github.com/Milez213/ray-tracer.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ray-tracer.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6A506874-2E98-4B2F-B23A-E6AA384C01F8</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Milez213/ray-tracer.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6A506874-2E98-4B2F-B23A-E6AA384C01F8</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6A506874-2E98-4B2F-B23A-E6AA384C01F8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ray-tracer</string>
+		</dict>
+	</array>
+</dict>
+</plist>
