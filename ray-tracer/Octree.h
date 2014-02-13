@@ -24,7 +24,7 @@ using namespace std;
 using namespace glm;
 
 #define NUM_CHILDREN 8
-#define MAX_OBJECTS 3
+#define MAX_OBJECTS 100
 
 struct octree_node
 {
@@ -68,13 +68,13 @@ struct octree_node
             children[i].~octree_node();
          }
     
-         delete[] children;
+         free(children);
       }
    }*/
     
    void add(Intersectable<Renderable> *object)
    {
-      if (numObjects < MAX_OBJECTS)
+      if (children == NULL && numObjects < MAX_OBJECTS)
       {
          objects[numObjects++] = object;
       }
@@ -202,7 +202,7 @@ struct octree_node
             collected->push_back(objects[i]);
          }
       }
-      else
+      else if (children != NULL)
       {
          for (int i = 0; i < NUM_CHILDREN; i++)
          {
@@ -210,8 +210,6 @@ struct octree_node
          }
       }
    }
-   
-   
 };
 
 class Octree : public Intersectable<Renderable>

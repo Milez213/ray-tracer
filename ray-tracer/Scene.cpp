@@ -55,12 +55,23 @@ color **Scene::TraceScene()
    ray ***cast = camera->CastRays();
    int antialiasing = powf(camera->AntiAliasing(), 2);
    
+   int totalRays = camera->Width() * camera->Height() * antialiasing;
+   int percent;
+   int lastPercent = -1;
+   
    for (int i = 0; i < camera->Width(); i++)
    {
       pixels[i] = (color *)malloc(sizeof(color) * camera->Height());
       for (int j = 0; j < camera->Height(); j++) {
          pixels[i][j] = color();
          for (int k = 0; k < antialiasing; k++) {
+            percent = (int)(((float)(i * camera->Height() * antialiasing + j * antialiasing + k) / (float)totalRays) * 100);
+            if (percent != lastPercent)
+            {
+               printf("%d%% ", percent);
+               fflush(stdout);
+               lastPercent = percent;
+            }
             pixels[i][j] += TraceRay(cast[i][j][k], 0);
          }
          pixels[i][j] /= antialiasing;
