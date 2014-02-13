@@ -55,7 +55,7 @@ struct octree_node
       bounds = box;
    }
    
-   inline ~octree_node()
+   /*inline ~octree_node()
    {
       if (numObjects)
       {
@@ -70,7 +70,7 @@ struct octree_node
     
          delete[] children;
       }
-   }
+   }*/
     
    void add(Intersectable<Renderable> *object)
    {

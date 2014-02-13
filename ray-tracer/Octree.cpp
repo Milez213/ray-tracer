@@ -65,8 +65,11 @@ intersect_info<Renderable> Octree::Intersect(ray cast)
       info.time = MISS;
       info.object = NULL;
    }
+   else
+   {
+      info.time = time;
+      info.object = object;
+   }
    
    return info;
-   
-   return intersect_info<Renderable>();
 }

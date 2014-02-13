@@ -32,23 +32,24 @@ int main(int argc, const char * argv[])
    
    vector<Intersectable<Renderable> *> objects;
    Sphere *s = new Sphere(vec3(0.0f), 1.0f, material());
+   objects.push_back(s);
    s = new Sphere(vec3(2.0f), 1.0f, material());
    objects.push_back(s);
    Octree *oct = new Octree(&objects);
-   /*vector<Intersectable<Renderable> *> octrees;
-   octrees.push_back(oct);*/
+   vector<Intersectable<Renderable> *> octrees;
+   octrees.push_back(oct);
    
    vector<AbstractLight *> lights;
    lights.push_back(new PointLight(color(0.7f), vec3(5.0f)));
    lights.push_back(new PointLight(color(0.5f),
                                    vec3(-5.0f, 5.0f, 1.0f)));
    
-   Camera *cam = new Camera(vec3(0.0f, 0.0f, 4.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+   Camera *cam = new Camera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
    cam->SetHeight(height);
    cam->SetWidth(width);
    cam->SetAntiAliasing(3);
    
-   Scene *scene = Scene::CreateScene(&objects, &lights, cam);
+   Scene *scene = Scene::CreateScene(&octrees, &lights, cam);
    
    color ** image = scene->TraceScene();
    
