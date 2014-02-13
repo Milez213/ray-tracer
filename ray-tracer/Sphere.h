@@ -22,11 +22,11 @@ public:
    Sphere(vec3 center, float radius, material mat);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
-   virtual bounding_box Bounds();
+   virtual inline bounding_box Bounds() { return bounds; };
    
-   virtual vec3 Normal(vec3 contact);
+   virtual inline vec3 Normal(vec3 contact);
    virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light);
-   virtual material Material() { return mat; };
+   virtual inline material Material() { return mat; };
    
 private:
    vec3 position;

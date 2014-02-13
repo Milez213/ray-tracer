@@ -19,8 +19,6 @@
 #include "Renderable.h"
 #include "Camera.h"
 
-#define INF 10000.0f
-
 using namespace std;
 
 class Scene

@@ -29,6 +29,18 @@ struct bounding_box
       minimum = min;
       maximum = max;
    }
+   
+   inline bool intersects(bounding_box bounds)
+   {
+      if (maximum.x < bounds.minimum.x) { return false; }
+      if (minimum.x > bounds.maximum.x) { return false; }
+      if (maximum.y < bounds.minimum.y) { return false; }
+      if (minimum.y > bounds.maximum.y) { return false; }
+      if (maximum.z < bounds.minimum.z) { return false; }
+      if (minimum.z > bounds.maximum.z) { return false; }
+      
+      return true;
+   }
 };
 
 #endif

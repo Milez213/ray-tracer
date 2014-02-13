@@ -61,11 +61,6 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 	return hit;
 }
 
-bounding_box Sphere::Bounds()
-{
-   return bounds;
-}
-
 vec3 Sphere::Normal(vec3 contact)
 {
    return normalize(contact - position);

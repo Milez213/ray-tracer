@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <vector>
 
 #include "glm/glm.hpp"
 
@@ -17,8 +18,12 @@
 #include "Camera.h"
 #include "Sphere.h"
 #include "PointLight.h"
+#include "Octree.h"
+
+#include "Renderable.h"
 
 using namespace glm;
+using namespace std;
 
 int main(int argc, const char * argv[])
 {
@@ -27,7 +32,11 @@ int main(int argc, const char * argv[])
    
    vector<Intersectable<Renderable> *> objects;
    Sphere *s = new Sphere(vec3(0.0f), 1.0f, material());
+   s = new Sphere(vec3(2.0f), 1.0f, material());
    objects.push_back(s);
+   Octree *oct = new Octree(&objects);
+   /*vector<Intersectable<Renderable> *> octrees;
+   octrees.push_back(oct);*/
    
    vector<AbstractLight *> lights;
    lights.push_back(new PointLight(color(0.7f), vec3(5.0f)));

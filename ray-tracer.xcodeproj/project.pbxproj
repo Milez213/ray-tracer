@@ -13,6 +13,7 @@
 		C39516DE18ACC1D80018AC32 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516DC18ACC1D80018AC32 /* PointLight.cpp */; };
 		C39516E218ACC8180018AC32 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516E018ACC8180018AC32 /* Sphere.cpp */; };
 		C39516E918ACDA530018AC32 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516E718ACDA530018AC32 /* PhongShader.cpp */; };
+		C39516ED18ACE45C0018AC32 /* Octree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516EB18ACE45C0018AC32 /* Octree.cpp */; };
 		C3A3930118ABFBB200107D89 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930018ABFBB200107D89 /* main.cpp */; };
 		C3A3930318ABFBB200107D89 /* ray_tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C3A3930218ABFBB200107D89 /* ray_tracer.1 */; };
 		C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E5219918AC0C68005419C4 /* Scene.cpp */; };
@@ -51,6 +52,8 @@
 		C39516E518ACD7BE0018AC32 /* AbstractShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractShader.h; sourceTree = "<group>"; };
 		C39516E718ACDA530018AC32 /* PhongShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhongShader.cpp; sourceTree = "<group>"; };
 		C39516E818ACDA530018AC32 /* PhongShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhongShader.h; sourceTree = "<group>"; };
+		C39516EB18ACE45C0018AC32 /* Octree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Octree.cpp; sourceTree = "<group>"; };
+		C39516EC18ACE45C0018AC32 /* Octree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Octree.h; sourceTree = "<group>"; };
 		C3A392FD18ABFBB200107D89 /* ray-tracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ray-tracer"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3A3930018ABFBB200107D89 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C3A3930218ABFBB200107D89 /* ray_tracer.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ray_tracer.1; sourceTree = "<group>"; };
@@ -91,6 +94,7 @@
 		C39516DF18ACC7E00018AC32 /* Intersectables */ = {
 			isa = PBXGroup;
 			children = (
+				C39516EA18ACE3970018AC32 /* Octree */,
 				C39516B918AC2A0A0018AC32 /* Renderable.h */,
 				C39516B618AC2A0A0018AC32 /* Intersectable.h */,
 				C39516E018ACC8180018AC32 /* Sphere.cpp */,
@@ -107,6 +111,15 @@
 				C39516E818ACDA530018AC32 /* PhongShader.h */,
 			);
 			name = Shaders;
+			sourceTree = "<group>";
+		};
+		C39516EA18ACE3970018AC32 /* Octree */ = {
+			isa = PBXGroup;
+			children = (
+				C39516EB18ACE45C0018AC32 /* Octree.cpp */,
+				C39516EC18ACE45C0018AC32 /* Octree.h */,
+			);
+			name = Octree;
 			sourceTree = "<group>";
 		};
 		C3A392F418ABFBB200107D89 = {
@@ -206,6 +219,7 @@
 				C39516E218ACC8180018AC32 /* Sphere.cpp in Sources */,
 				C3A3930118ABFBB200107D89 /* main.cpp in Sources */,
 				C39516DA18AC898B0018AC32 /* Image.cpp in Sources */,
+				C39516ED18ACE45C0018AC32 /* Octree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +309,11 @@
 		C3A3930818ABFBB200107D89 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/opt/local/include/,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

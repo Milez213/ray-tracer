@@ -12,6 +12,7 @@
 #include "glm/glm.hpp"
 
 #define MISS -1
+#define INF 10000.0f
 #define STEP 0.0001f
 
 using namespace glm;
@@ -70,19 +71,19 @@ struct ray
    }
 };
 
-template<class T>
+template<class R>
 struct intersect_info
 {
-   T *object;
+   R *object;
    float time;
    
-   inline intersect_info<T>()
+   inline intersect_info<R>()
    {
       object = NULL;
       time = MISS;
    }
    
-   inline intersect_info<T>(T *obj, float t)
+   inline intersect_info<R>(R *obj, float t)
    {
       object = obj;
       time = t;
