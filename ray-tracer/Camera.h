@@ -21,8 +21,9 @@ class Camera
 {
 public:
    Camera(vec3 eye, vec3 lookAt, vec3 up);
-   ray ***CastRays();
-   vec3 Position();
+   ray ***CastRays() const;
+   
+   inline vec3 Position() const { return eye; };
    
    inline int Width() const { return width; };
    inline void SetWidth(int w) { width = w; };

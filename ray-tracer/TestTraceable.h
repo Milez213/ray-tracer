@@ -11,16 +11,21 @@
 
 #include <iostream>
 
-#include "Traceable.h"
+#include "Intersectable.h"
+#include "Renderable.h"
 
-class TestTraceable : public Traceable
+class TestTraceable : public Intersectable<Renderable>, public Renderable
 {
 public:
-   virtual intersect_info<Traceable> Intersect(ray cast);
+   virtual intersect_info<Renderable> Intersect(ray cast);
    virtual bounding_box Bounds();
    
    virtual vec3 Normal(vec3 contact);
-   virtual color Shade(vec3 contact);
+   virtual color Shade(vec3 contact, const AbstractLight *light, const Camera *cam);
+   virtual material Material() { return mat; };
+
+private:
+   material mat;
 };
 
 #endif /* defined(__ray_tracer__TestTraceable__) */

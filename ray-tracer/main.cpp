@@ -13,26 +13,31 @@
 #include "Image.h"
 
 #include "Scene.h"
+
 #include "Camera.h"
-#include "TestTraceable.h"
-#include "AbstractLight.h"
+#include "Sphere.h"
+#include "PointLight.h"
 
 using namespace glm;
 
 int main(int argc, const char * argv[])
 {
-   int width = 640;
-   int height = 480;
+   int width = 1920;
+   int height = 1080;
    
-   vector<Traceable *> objects;
-   TestTraceable *tt = new TestTraceable();
-   objects.push_back(tt);
+   vector<Intersectable<Renderable> *> objects;
+   Sphere *s = new Sphere(vec3(0.0f), 1.0f, material());
+   objects.push_back(s);
    
    vector<AbstractLight *> lights;
+   lights.push_back(new PointLight(color(0.7f), vec3(5.0f)));
+   lights.push_back(new PointLight(color(0.5f),
+                                   vec3(-5.0f, 5.0f, 1.0f)));
    
-   Camera *cam = new Camera(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
+   Camera *cam = new Camera(vec3(0.0f, 0.0f, 4.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
    cam->SetHeight(height);
    cam->SetWidth(width);
+   cam->SetAntiAliasing(3);
    
    Scene *scene = Scene::CreateScene(&objects, &lights, cam);
    
@@ -50,9 +55,6 @@ int main(int argc, const char * argv[])
    }
    
    output->WriteTga("output.tga");
-   
-   // insert code here...
-   std::cout << "Hello, World!\n";
    return 0;
 }
 

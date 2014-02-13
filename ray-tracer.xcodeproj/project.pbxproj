@@ -10,6 +10,9 @@
 		C39516C018AC5C1F0018AC32 /* TestTraceable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516BE18AC57710018AC32 /* TestTraceable.cpp */; };
 		C39516C418AC5C310018AC32 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516BB18AC45320018AC32 /* Camera.cpp */; };
 		C39516DA18AC898B0018AC32 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516D818AC898B0018AC32 /* Image.cpp */; };
+		C39516DE18ACC1D80018AC32 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516DC18ACC1D80018AC32 /* PointLight.cpp */; };
+		C39516E218ACC8180018AC32 /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516E018ACC8180018AC32 /* Sphere.cpp */; };
+		C39516E918ACDA530018AC32 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39516E718ACDA530018AC32 /* PhongShader.cpp */; };
 		C3A3930118ABFBB200107D89 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930018ABFBB200107D89 /* main.cpp */; };
 		C3A3930318ABFBB200107D89 /* ray_tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C3A3930218ABFBB200107D89 /* ray_tracer.1 */; };
 		C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E5219918AC0C68005419C4 /* Scene.cpp */; };
@@ -35,13 +38,19 @@
 		C39516B718AC2A0A0018AC32 /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
 		C39516B818AC2A0A0018AC32 /* ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ray.h; sourceTree = "<group>"; };
 		C39516B918AC2A0A0018AC32 /* Renderable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderable.h; sourceTree = "<group>"; };
-		C39516BA18AC2C570018AC32 /* Traceable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Traceable.h; sourceTree = "<group>"; };
 		C39516BB18AC45320018AC32 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		C39516BC18AC45320018AC32 /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 		C39516BE18AC57710018AC32 /* TestTraceable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestTraceable.cpp; sourceTree = "<group>"; };
 		C39516BF18AC57710018AC32 /* TestTraceable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestTraceable.h; sourceTree = "<group>"; };
 		C39516D818AC898B0018AC32 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		C39516D918AC898B0018AC32 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		C39516DC18ACC1D80018AC32 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
+		C39516DD18ACC1D80018AC32 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
+		C39516E018ACC8180018AC32 /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
+		C39516E118ACC8180018AC32 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
+		C39516E518ACD7BE0018AC32 /* AbstractShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractShader.h; sourceTree = "<group>"; };
+		C39516E718ACDA530018AC32 /* PhongShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhongShader.cpp; sourceTree = "<group>"; };
+		C39516E818ACDA530018AC32 /* PhongShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhongShader.h; sourceTree = "<group>"; };
 		C3A392FD18ABFBB200107D89 /* ray-tracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ray-tracer"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3A3930018ABFBB200107D89 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C3A3930218ABFBB200107D89 /* ray_tracer.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ray_tracer.1; sourceTree = "<group>"; };
@@ -69,6 +78,37 @@
 			name = "Test Objects";
 			sourceTree = "<group>";
 		};
+		C39516DB18ACC1C50018AC32 /* Lights */ = {
+			isa = PBXGroup;
+			children = (
+				C39516B418AC2A0A0018AC32 /* AbstractLight.h */,
+				C39516DC18ACC1D80018AC32 /* PointLight.cpp */,
+				C39516DD18ACC1D80018AC32 /* PointLight.h */,
+			);
+			name = Lights;
+			sourceTree = "<group>";
+		};
+		C39516DF18ACC7E00018AC32 /* Intersectables */ = {
+			isa = PBXGroup;
+			children = (
+				C39516B918AC2A0A0018AC32 /* Renderable.h */,
+				C39516B618AC2A0A0018AC32 /* Intersectable.h */,
+				C39516E018ACC8180018AC32 /* Sphere.cpp */,
+				C39516E118ACC8180018AC32 /* Sphere.h */,
+			);
+			name = Intersectables;
+			sourceTree = "<group>";
+		};
+		C39516E318ACD76B0018AC32 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				C39516E518ACD7BE0018AC32 /* AbstractShader.h */,
+				C39516E718ACDA530018AC32 /* PhongShader.cpp */,
+				C39516E818ACDA530018AC32 /* PhongShader.h */,
+			);
+			name = Shaders;
+			sourceTree = "<group>";
+		};
 		C3A392F418ABFBB200107D89 = {
 			isa = PBXGroup;
 			children = (
@@ -88,21 +128,20 @@
 		C3A392FF18ABFBB200107D89 /* ray-tracer */ = {
 			isa = PBXGroup;
 			children = (
+				C39516E318ACD76B0018AC32 /* Shaders */,
+				C39516DF18ACC7E00018AC32 /* Intersectables */,
+				C39516DB18ACC1C50018AC32 /* Lights */,
 				C39516D818AC898B0018AC32 /* Image.cpp */,
 				C39516D918AC898B0018AC32 /* Image.h */,
 				C39516BD18AC57450018AC32 /* Test Objects */,
 				C3A3930018ABFBB200107D89 /* main.cpp */,
 				C3E5219918AC0C68005419C4 /* Scene.cpp */,
 				C3E5219A18AC0C68005419C4 /* Scene.h */,
-				C39516BA18AC2C570018AC32 /* Traceable.h */,
 				C39516BB18AC45320018AC32 /* Camera.cpp */,
 				C39516BC18AC45320018AC32 /* Camera.h */,
-				C39516B418AC2A0A0018AC32 /* AbstractLight.h */,
 				C39516B518AC2A0A0018AC32 /* boundingbox.h */,
-				C39516B618AC2A0A0018AC32 /* Intersectable.h */,
 				C39516B718AC2A0A0018AC32 /* material.h */,
 				C39516B818AC2A0A0018AC32 /* ray.h */,
-				C39516B918AC2A0A0018AC32 /* Renderable.h */,
 				C3A3930218ABFBB200107D89 /* ray_tracer.1 */,
 			);
 			path = "ray-tracer";
@@ -162,6 +201,9 @@
 				C39516C418AC5C310018AC32 /* Camera.cpp in Sources */,
 				C39516C018AC5C1F0018AC32 /* TestTraceable.cpp in Sources */,
 				C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */,
+				C39516E918ACDA530018AC32 /* PhongShader.cpp in Sources */,
+				C39516DE18ACC1D80018AC32 /* PointLight.cpp in Sources */,
+				C39516E218ACC8180018AC32 /* Sphere.cpp in Sources */,
 				C3A3930118ABFBB200107D89 /* main.cpp in Sources */,
 				C39516DA18AC898B0018AC32 /* Image.cpp in Sources */,
 			);

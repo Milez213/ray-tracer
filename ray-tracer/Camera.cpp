@@ -13,13 +13,29 @@ Camera::Camera(vec3 e, vec3 l, vec3 u)
    eye = e;
    lookAt = l;
    up = u;
+   
+   width = 640;
+   height = 480;
+   antialiasing = 1;
 }
 
-ray ***Camera::CastRays()
+#define ZOOM 0.6f
+ray ***Camera::CastRays() const
 {
    ray ***cast = (ray ***)malloc(sizeof(ray **) * width);
    
-   int raysPerPixel = powf(2, antialiasing);
+   int raysPerPixel = powf(antialiasing, 2);
+   
+   float xPixelCenter;
+   float yPixelCenter;
+   float xRayPosition;
+   float yRayPosition;
+   float sectionSize = 1.0f / (float)antialiasing;
+   
+   vec3 w;
+   vec3 u;
+   vec3 v;
+   vec3 direction;
    
    for (int i = 0; i < width; i++)
    {
@@ -27,17 +43,27 @@ ray ***Camera::CastRays()
       for (int j = 0; j < height; j++)
       {
          cast[i][j] = (ray *)malloc(sizeof(ray) * raysPerPixel);
-         for (int k = 0; k < raysPerPixel; k++)
-         {
-            
+         
+         xPixelCenter = (float)i - 0.5f;
+         yPixelCenter = (float)j - 0.5f;
+         
+         for (unsigned int x = 0; x < antialiasing; x++) {
+            xRayPosition = (xPixelCenter + sectionSize * x) / (float)width - 0.5f;
+            for (unsigned int y = 0; y < antialiasing; y++) {
+               yRayPosition = ((yPixelCenter + sectionSize * y) / (float)height) * ((float)height/(float)width) - ((float)height/(float)width) / 2;
+               
+               w = normalize(lookAt - eye);
+               u = normalize(cross(w, up));
+               v = normalize(cross(u, w));
+               
+               direction = normalize(ZOOM * w + xRayPosition * u + yRayPosition * v);
+               
+               cast[i][j][x * antialiasing + y] = ray(eye, direction);
+            }
          }
+         
       }
    }
    
    return cast;
-}
-
-vec3 Camera::Position()
-{
-   return vec3(0.0f);
 }

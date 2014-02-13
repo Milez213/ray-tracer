@@ -9,9 +9,9 @@
 #include "TestTraceable.h"
 
 
-intersect_info<Traceable> TestTraceable::Intersect(ray cast)
+intersect_info<Renderable> TestTraceable::Intersect(ray cast)
 {
-   return intersect_info<Traceable>(this, 0.0f);
+   return intersect_info<Renderable>(this, 0.0f);
 }
 
 bounding_box TestTraceable::Bounds()
@@ -24,7 +24,7 @@ vec3 TestTraceable::Normal(vec3 contact)
    return vec3(0.0f, 1.0f, 0.0f);
 }
 
-color TestTraceable::Shade(vec3 contact)
+color TestTraceable::Shade(vec3 contact, const AbstractLight *light, const Camera *cam)
 {
    return color(1.0f, 1.0f, 1.0f);
 }

@@ -11,6 +11,7 @@
 
 #include "glm/glm.hpp"
 
+#define MISS -1
 #define STEP 0.0001f
 
 using namespace glm;
@@ -19,6 +20,12 @@ struct ray
 {
    vec3 origin;
    vec3 direction;
+   
+   inline ray()
+   {
+      origin = vec3(0.0f);
+      direction = vec3(0.0f);
+   }
    
    inline ray(vec3 orig, vec3 dir)
    {
@@ -44,6 +51,7 @@ struct ray
                                      (direction - normal *
                                      dot(direction, normal)) -
                                      normal * sqrt(root));
+      refracted.origin = contact + (refracted.direction * STEP);
       
       return refracted;
    }
@@ -67,6 +75,12 @@ struct intersect_info
 {
    T *object;
    float time;
+   
+   inline intersect_info<T>()
+   {
+      object = NULL;
+      time = MISS;
+   }
    
    inline intersect_info<T>(T *obj, float t)
    {

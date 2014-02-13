@@ -18,7 +18,13 @@ struct bounding_box
    vec3 minimum;
    vec3 maximum;
    
-   inline bounding_box(vec3 min, vec3(max))
+   inline bounding_box()
+   {
+      minimum = vec3(0.0f);
+      maximum = vec3(0.0f);
+   }
+   
+   inline bounding_box(vec3 min, vec3 max)
    {
       minimum = min;
       maximum = max;

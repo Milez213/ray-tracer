@@ -11,6 +11,9 @@
 
 #include "glm/glm.hpp"
 
+#include "AbstractLight.h"
+#include "Camera.h"
+
 #include "material.h"
 
 using namespace glm;
@@ -19,7 +22,8 @@ class Renderable
 {
 public:
    virtual vec3 Normal(vec3 contact) = 0;
-   virtual color Shade(vec3 contact) = 0;
+   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light) = 0;
+   virtual material Material() = 0;
 };
 
 

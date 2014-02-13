@@ -12,8 +12,6 @@
 #include "ray.h"
 #include "boundingbox.h"
 
-#define MISS -1
-
 template<class T>
 class Intersectable
 {
