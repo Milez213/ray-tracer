@@ -158,7 +158,7 @@ color Scene::CalculateColor(ray cast, vec3 contact, Renderable *object, int dept
 
 float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
 {
-   float shadowed = 0.0f;
+   float shadowed = 1.0f;
    
    Renderable *object = NULL;
    float time;
@@ -183,11 +183,11 @@ float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
       
       if (time != INF)
       {
-         shadowed += object->Material().opacity;
+         shadowed *= (1.0f - object->Material().opacity);
       }
       
       cast = ray(contact + (cast.direction * time), cast.direction);
-   } while (time != INF && shadowed < 0.0f);
+   } while (time != INF && shadowed < 1.0f);
    
    return shadowed;
 }
