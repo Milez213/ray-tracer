@@ -38,38 +38,7 @@ Octree::Octree(vector<Intersectable<Renderable> *> *objects)
 
 intersect_info<Renderable> Octree::Intersect(ray cast)
 {
-   vector<Intersectable<Renderable> *> collected;
-   int numCollected;
-   
-   root.intersect(cast, &collected);
-   
-   numCollected = (int)collected.size();
-   
-   intersect_info<Renderable> info;
-   float time = INF;
-   Renderable *object;
-   
-   for (int i = 0; i < numCollected; i++)
-   {
-      info = collected.at(i)->Intersect(cast);
-      
-      if (info.time != MISS && info.time < time)
-      {
-         time = info.time;
-         object = info.object;
-      }
-   }
-   
-   if (time == INF)
-   {
-      info.time = MISS;
-      info.object = NULL;
-   }
-   else
-   {
-      info.time = time;
-      info.object = object;
-   }
+   intersect_info<Renderable> info = root.intersect(cast);
    
    return info;
 }

@@ -23,6 +23,7 @@
 #include "Camera.h"
 #include "Sphere.h"
 #include "Triangle.h"
+#include "Mesh.h"
 #include "PointLight.h"
 #include "Octree.h"
 
@@ -109,13 +110,8 @@ void get_node_objects(const aiScene *scene,
             meshTriangles.push_back(tri);
          }
       }
-      /*RayMesh *myMesh = new RayMesh(&meshTriangles,
-                                    r_makeColor(vec3(0.4f)),
-                                    r_makeColor(vec3(0.6f)),
-                                    r_makeColor(vec3(0.0f)),
-                                    0.0f, 0.0f, 0.0f,
-                                    *transforms, phong);
-      triangles->push_back(myMesh);*/
+      Mesh *myMesh = new Mesh(&meshTriangles, material(), *transform);
+      triangles->push_back(myMesh);
    }
    
    /*
@@ -133,6 +129,8 @@ void get_node_objects(const aiScene *scene,
                             cam->mLookAt.y,
                             cam->mLookAt.z,
                             1.0f) * *transform;
+         
+         printf("Camera: (%0.3f, %0.3f, %0.3f)\n", eye.x, eye.y, eye.z);
          
          *camera = new Camera(vec3(eye.x, eye.y, eye.z),
                               vec3(lookAt.x, lookAt.y, lookAt.z),
@@ -268,23 +266,23 @@ int main(int argc, const char * argv[])
    int width = 1280;
    int height = 720;
    
-   vector<Intersectable<Renderable> *> *objects = TestTriangles();
+   vector<Intersectable<Renderable> *> *objects = new vector<Intersectable<Renderable> *>();
+   vector<AbstractLight *> *lights = new vector<AbstractLight *>();
+   Camera *camera;
    
-   Octree *oct = new Octree(objects);
-   vector<Intersectable<Renderable> *> octrees;
-   octrees.push_back(oct);
-   
-   vector<AbstractLight *> lights;
-   lights.push_back(new PointLight(color(0.8f), vec3(5.0f)));
-   lights.push_back(new PointLight(color(0.9f),
-                                   vec3(1.0f, 1.0f, 7.0f)));
+   Assimp::Importer importer;
+   const aiScene *aScene = importer.ReadFile("/Users/bryanbell/Dropbox/Homework/ART384/TableLeg.dae",
+                                            aiProcess_CalcTangentSpace       |
+                                            aiProcess_Triangulate            |
+                                            aiProcess_JoinIdenticalVertices  |
+                                            aiProcess_SortByPType);
    
    Camera *cam = new Camera(vec3(0.0f, 0.0f, 4.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
    cam->SetHeight(height);
    cam->SetWidth(width);
    cam->SetAntiAliasing(3);
    
-   Scene *scene = Scene::CreateScene(&octrees, &lights, cam);
+   Scene *scene = Scene::CreateScene(objects, lights, camera);
    
    color ** image = scene->TraceScene();
    
