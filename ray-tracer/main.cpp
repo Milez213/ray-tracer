@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -241,6 +242,27 @@ vector<Intersectable<Renderable> *> *TestScene()
    return objects;
 }
 
+int TestTransformScene(const aiScene *scene,
+                       vector<Intersectable<Renderable> *> *objects,
+                       vector<AbstractLight *> *lights,
+                       Camera **camera)
+{
+   Sphere *s;
+   float x = 0.0f;
+   float y = 0.0f;
+   float z = 0.0f;
+   float xT = 1.0f;
+   float yT = 2.0f;
+   float zT = 0.0f;
+   float radius = 1.0f;
+   
+   mat4 transform = mat4(0.0f);
+   transform = translate(transform, vec3(xT, yT, zT));
+   
+   s = new Sphere(vec3(x, y, z), radius, material(), transform);
+   return 0;
+}
+
 int main(int argc, const char * argv[])
 {
    int width = 1280;
@@ -260,7 +282,7 @@ int main(int argc, const char * argv[])
    Camera *cam = new Camera(vec3(0.0f, 0.0f, 4.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
    cam->SetHeight(height);
    cam->SetWidth(width);
-   cam->SetAntiAliasing(1);
+   cam->SetAntiAliasing(3);
    
    Scene *scene = Scene::CreateScene(&octrees, &lights, cam);
    
