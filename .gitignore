@@ -11,3 +11,6 @@
 *.lai
 *.la
 *.a
+
+#User Interface State
+ray-tracer.xcodeproj/project.xcworkspace/xcuserdata/bryanbell.xcuserdatad/UserInterfaceState.xcuserstate
