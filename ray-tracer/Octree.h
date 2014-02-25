@@ -24,7 +24,7 @@ using namespace std;
 using namespace glm;
 
 #define NUM_CHILDREN 8
-#define MAX_OBJECTS 100
+#define MAX_OBJECTS 20
 
 struct octree_node
 {
@@ -131,8 +131,9 @@ struct octree_node
       }
    }
    
-   void intersect(ray cast, vector<Intersectable<Renderable> *> *collected)
+   intersect_info<Renderable> intersect(ray cast)
    {
+      intersect_info<Renderable> retrieved = intersect_info<Renderable>(NULL, MISS);
       float tMin, tMax;
       
       float xMin = (bounds.minimum.x - cast.origin.x) / cast.direction.x;
@@ -157,7 +158,7 @@ struct octree_node
       
       if ((tMin > yMax) || (yMin > tMax))
       {
-         return;
+         return retrieved;
       }
       
       if (yMin > xMin)
@@ -180,7 +181,7 @@ struct octree_node
       
       if ((tMin > zMax) || (zMin > tMax))
       {
-         return;
+         return retrieved;
       }
       
       if (zMin > xMin)
@@ -193,22 +194,36 @@ struct octree_node
       }
       
       if (tMax < 0.0f)
-         return;
+         return retrieved;
+      
+      intersect_info<Renderable> temp;
       
       if (numObjects)
       {
          for (int i = 0; i < numObjects; i++)
          {
-            collected->push_back(objects[i]);
+            temp = objects[i]->Intersect(cast);
+            if (temp.time != MISS && (retrieved.time == MISS || temp.time < retrieved.time))
+            {
+               retrieved.object = temp.object;
+               retrieved.time = temp.time;
+            }
          }
       }
       else if (children != NULL)
       {
          for (int i = 0; i < NUM_CHILDREN; i++)
          {
-            children[i].intersect(cast, collected);
+            temp = children[i].intersect(cast);
+            if (temp.time != MISS && (retrieved.time == MISS || temp.time < retrieved.time))
+            {
+               retrieved.object = temp.object;
+               retrieved.time = temp.time;
+            }
          }
       }
+      
+      return retrieved;
    }
 };
 

@@ -69,6 +69,19 @@ struct ray
       
       return reflected;
    }
+   
+   inline ray transform_ray(mat4 transform)
+   {
+      vec4 transformedOrigin = vec4(origin, 1.0f) * transform;
+      vec4 transformedDirection = vec4(direction, 0.0f) * transform;
+      
+      return ray(vec3(transformedOrigin.x,
+                      transformedOrigin.y,
+                      transformedOrigin.z),
+                 vec3(transformedDirection.x,
+                      transformedDirection.y,
+                      transformedDirection.z));
+   }
 };
 
 template<class R>
