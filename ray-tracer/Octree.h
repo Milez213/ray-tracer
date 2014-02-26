@@ -24,7 +24,7 @@ using namespace std;
 using namespace glm;
 
 #define NUM_CHILDREN 8
-#define MAX_OBJECTS 20
+#define MAX_OBJECTS 100
 
 struct octree_node
 {

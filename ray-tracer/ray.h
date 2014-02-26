@@ -13,9 +13,39 @@
 
 #define MISS -1
 #define INF 10000.0f
-#define STEP 0.0001f
+#define STEP 0.001f
 
 using namespace glm;
+
+#pragma mark GLM Transform Extensions
+
+inline vec3 transform_point(vec3 p, mat4 transform)
+{
+   vec4 transformed = vec4(p, 1.0f) * transform;
+   
+   if (transformed.w != 1.0f)
+   {
+      transformed = transformed / transformed.w;
+   }
+   
+   return vec3(transformed.x, transformed.y, transformed.z);
+}
+
+inline vec3 transform_vector(vec3 v, mat4 transform)
+{
+   vec4 transformed = vec4(v, 0.0f) * transform;
+   
+   return vec3(transformed.x, transformed.y, transformed.z);
+}
+
+inline vec3 transform_normal(vec3 n, mat4 transform)
+{
+   vec4 transformed = vec4(n, 0.0f) * inverse(transform);
+   
+   return vec3(transformed.x, transformed.y, transformed.z);
+}
+
+#pragma mark Ray Struct Definition
 
 struct ray
 {
@@ -72,15 +102,10 @@ struct ray
    
    inline ray transform_ray(mat4 transform)
    {
-      vec4 transformedOrigin = vec4(origin, 1.0f) * transform;
-      vec4 transformedDirection = vec4(direction, 0.0f) * transform;
+      vec3 transformedOrigin = transform_point(origin, transform);
+      vec3 transformedDirection = transform_vector(direction, transform);
       
-      return ray(vec3(transformedOrigin.x,
-                      transformedOrigin.y,
-                      transformedOrigin.z),
-                 vec3(transformedDirection.x,
-                      transformedDirection.y,
-                      transformedDirection.z));
+      return ray(transformedOrigin, transformedDirection);
    }
 };
 

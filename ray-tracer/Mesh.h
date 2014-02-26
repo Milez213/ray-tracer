@@ -32,8 +32,8 @@ public:
    virtual intersect_info<Renderable> Intersect(ray cast);
    virtual bounding_box Bounds() { return tree->Bounds(); };
    
-   virtual inline vec3 Normal(vec3 contact) { return triangle->Normal(contact); };
-   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light) { return triangle->Shade(contact, cam, light); };
+   virtual inline vec3 Normal(vec3 contact);
+   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light);
    virtual inline material Material() { return mat; };
    
 private:

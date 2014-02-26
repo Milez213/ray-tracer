@@ -174,7 +174,7 @@ float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
       {
          info = objects->at(i)->Intersect(cast);
          
-         if (info.time != MISS && info.time < time)
+         if (info.time > 0.0f && info.time < time)
          {
             time = info.time;
             object = info.object;
@@ -187,7 +187,7 @@ float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
       }
       
       cast = ray(contact + (cast.direction * time), cast.direction);
-   } while (time != INF && shadowed > 0.1f);
+   } while (time != INF && shadowed > 0.01f);
    
    return shadowed;
 }

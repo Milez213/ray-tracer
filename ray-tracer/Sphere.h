@@ -20,6 +20,7 @@ class Sphere : public Intersectable<Renderable>, public Renderable
 {
 public:
    Sphere(vec3 center, float radius, material mat);
+   Sphere(vec3 center, float rad, material mtr, mat4 trans);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
    virtual inline bounding_box Bounds() { return bounds; };
@@ -31,6 +32,9 @@ public:
 private:
    vec3 position;
    float radius;
+   
+   mat4 transform;
+   mat4 inverseTranspose;
    
    material mat;
    bounding_box bounds;

@@ -9,12 +9,15 @@
 #include <iostream>
 #include <vector>
 
+#define GLM_FORCE_RADIANS
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+
+#include "ray.h"
 
 #include "Image.h"
 
@@ -121,19 +124,13 @@ void get_node_objects(const aiScene *scene,
    for (int i = 0; i < scene->mNumCameras; i++) {
       aiCamera *cam = scene->mCameras[i];
       if (cam->mName == node->mName) {
-         vec4 eye = vec4(cam->mPosition.x,
-                         cam->mPosition.y,
-                         cam->mPosition.z,
-                         1.0f) * *transform;
-         vec4 lookAt = vec4(cam->mLookAt.x,
-                            cam->mLookAt.y,
-                            cam->mLookAt.z,
-                            1.0f) * *transform;
+         vec3 eye = transform_point(vec3(cam->mPosition.x, cam->mPosition.y, cam->mPosition.z), *transform);
+         vec3 lookAt = transform_point(vec3(cam->mLookAt.x, cam->mLookAt.y, cam->mLookAt.z), *transform);
          
          printf("Camera: (%0.3f, %0.3f, %0.3f)\n", eye.x, eye.y, eye.z);
          
-         *camera = new Camera(vec3(eye.x, eye.y, eye.z),
-                              vec3(lookAt.x, lookAt.y, lookAt.z),
+         *camera = new Camera(eye,
+                              lookAt,
                               vec3(cam->mUp.x, cam->mUp.y, cam->mUp.z));
       }
    }
@@ -245,19 +242,51 @@ int TestTransformScene(const aiScene *scene,
                        vector<AbstractLight *> *lights,
                        Camera **camera)
 {
+   // Object
    Sphere *s;
    float x = 0.0f;
    float y = 0.0f;
    float z = 0.0f;
-   float xT = 1.0f;
-   float yT = 2.0f;
-   float zT = 0.0f;
+   float xT = -2.0f;
+   float yT = -2.0f;
+   float zT = -2.0f;
    float radius = 1.0f;
    
-   mat4 transform = mat4(0.0f);
+   mat4 transform = mat4();
    transform = translate(transform, vec3(xT, yT, zT));
    
    s = new Sphere(vec3(x, y, z), radius, material(), transform);
+   objects->push_back(s);
+   
+   xT = 1.0f;
+   yT = 1.0f;
+   zT = 1.0f;
+   radius = 0.5f;
+   
+   transform = translate(mat4(), vec3(xT, yT, zT));
+   
+   s = new Sphere(vec3(x, y, z), radius, material(), transform);
+   objects->push_back(s);
+   
+   //Camera
+   x = 0.0f;
+   y = 0.0f;
+   z = 10.0f;
+   int xL = 0.0f;
+   int yL = 0.0f;
+   int zL = 0.0f;
+   
+   *camera = new Camera(vec3(x, y, z), vec3(xL, yL, zL), vec3(0.0f, 1.0f, 0.0f));
+   
+   //Lights
+   PointLight *p;
+   x = 10.0f;
+   y = 10.0f;
+   z = 10.0f;
+   
+   p = new PointLight(color(1.0f, 1.0f, 1.0f), vec3(x, y, z));
+   lights->push_back(p);
+   
    return 0;
 }
 
@@ -271,16 +300,16 @@ int main(int argc, const char * argv[])
    Camera *camera;
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("/Users/bryanbell/Dropbox/Homework/ART384/TableLeg.dae",
+   const aiScene *aScene = importer.ReadFile("/Users/bryanbell/Dropbox/Homework/ART384/LavaLamp.dae",
                                             aiProcess_CalcTangentSpace       |
                                             aiProcess_Triangulate            |
                                             aiProcess_JoinIdenticalVertices  |
                                             aiProcess_SortByPType);
    
-   Camera *cam = new Camera(vec3(0.0f, 0.0f, 4.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
-   cam->SetHeight(height);
-   cam->SetWidth(width);
-   cam->SetAntiAliasing(3);
+   get_assimp_objects(aScene, objects, lights, &camera);
+   //TestTransformScene(aScene, objects, lights, &camera);
+   camera->SetWidth(width);
+   camera->SetHeight(height);
    
    Scene *scene = Scene::CreateScene(objects, lights, camera);
    

@@ -14,6 +14,21 @@ Sphere::Sphere(vec3 center, float rad, material mtr)
    radius = rad;
    mat = mtr;
    
+   transform = mat4(1.0f);
+   inverseTranspose = inverse(transpose(transform));
+   
+   bounds = bounding_box(position - radius, position + radius);
+}
+
+Sphere::Sphere(vec3 center, float rad, material mtr, mat4 trans)
+{
+   position = center;
+   radius = rad;
+   mat = mtr;
+   
+   transform = trans;
+   inverseTranspose = inverse(transpose(transform));
+   
    bounds = bounding_box(position - radius, position + radius);
 }
 
@@ -21,9 +36,11 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 {
    intersect_info<Renderable> hit;
    
-	float a = dot(cast.direction, cast.direction);
-	float b = 2.0f * dot(cast.origin - position, cast.direction);
-	float c = dot(cast.origin - position, cast.origin - position) - powf(radius, 2);
+   ray transformed = cast.transform_ray(inverseTranspose);
+   
+	float a = dot(transformed.direction, transformed.direction);
+	float b = 2.0f * dot(transformed.origin - position, transformed.direction);
+	float c = dot(transformed.origin - position, transformed.origin - position) - powf(radius, 2.0f);
 	
 	float discriminant = powf(b, 2) - 4 * a * c;
 	
@@ -31,10 +48,10 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 		discriminant = sqrt(discriminant);
 		float q;
 		
-		if (b < 0)
-        	q = -(b - discriminant)/2.0;
+		if (b < 0.0f)
+        	q = -(b - discriminant)/2.0f;
     	else
-        	q = -(b + discriminant)/2.0;
+        	q = -(b + discriminant)/2.0f;
       
       float t0 = q / a;
     	float t1 = c / q;
@@ -46,12 +63,12 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 	      t1 = temp;
 	   }
       
-	   if (t0 < 0)
+	   if (t0 < 0.0f)
       {
 	      hit.object = this;
          hit.time = t1;
 	   }
-      else
+      else if (t1 > 0.0f)
       {
 	      hit.object = this;
          hit.time = t0;
@@ -63,7 +80,9 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 
 vec3 Sphere::Normal(vec3 contact)
 {
-   return normalize(contact - position);
+   vec3 transformedContact = transform_point(contact, inverseTranspose);
+   
+   return normalize(transformedContact - position);
 }
 
 color Sphere::Shade(vec3 contact, vec3 cam, const AbstractLight *light)
