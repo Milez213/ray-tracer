@@ -81,6 +81,7 @@ void get_node_objects(const aiScene *scene,
       aiVector3D *verts = mesh->mVertices; // The vertices that define the mesh
       aiVector3D *norms = mesh->mNormals;
       vector<Intersectable<Renderable> *> meshTriangles;
+      material mat = material();
       for (int j = 0; j < mesh->mNumFaces; j++) {
          aiFace face = mesh->mFaces[j]; // The current face
          if (face.mNumIndices == 3) {
@@ -88,9 +89,16 @@ void get_node_objects(const aiScene *scene,
             aiColor3D diff(0.0f, 0.0f, 0.0f);
             aiColor3D spec(0.0f, 0.0f, 0.0f);
             aiColor3D ambt(0.0f, 0.0f, 0.0f);
+            float opac;
             aiReturn prop = mater->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
             prop = mater->Get(AI_MATKEY_COLOR_SPECULAR, spec);
             prop = mater->Get(AI_MATKEY_COLOR_AMBIENT, ambt);
+            prop = mater->Get(AI_MATKEY_OPACITY, opac);
+            mat.diffuse = color(diff.r, diff.g, diff.b);
+            mat.specular = color(spec.r, spec.g, spec.b);
+            mat.ambient = color(ambt.r, ambt.g, ambt.b);
+            //mat.opacity = opac;
+            
             Triangle *tri = new Triangle(vec3(verts[face.mIndices[0]].x,
                                                     verts[face.mIndices[0]].y,
                                                     verts[face.mIndices[0]].z),
@@ -109,11 +117,11 @@ void get_node_objects(const aiScene *scene,
                                                vec3(norms[face.mIndices[2]].x,
                                                     norms[face.mIndices[2]].y,
                                                     norms[face.mIndices[2]].z),
-                                               material());
+                                               mat);
             meshTriangles.push_back(tri);
          }
       }
-      Mesh *myMesh = new Mesh(&meshTriangles, material(), *transform);
+      Mesh *myMesh = new Mesh(&meshTriangles, mat, *transform);
       triangles->push_back(myMesh);
    }
    
@@ -312,6 +320,7 @@ int main(int argc, const char * argv[])
    camera->SetHeight(height);
    
    Scene *scene = Scene::CreateScene(objects, lights, camera);
+   scene->SetBackgroundColor(color(1.0f, 1.0f, 1.0f));
    
    color ** image = scene->TraceScene();
    

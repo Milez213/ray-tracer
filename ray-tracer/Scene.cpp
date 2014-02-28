@@ -186,7 +186,7 @@ float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
          shadowed *= (1.0f - object->Material().opacity);
       }
       
-      cast = ray(contact + (cast.direction * time), cast.direction);
+      cast = ray(cast.origin + (cast.direction * (time + STEP)), cast.direction);
    } while (time != INF && shadowed > 0.01f);
    
    return shadowed;
