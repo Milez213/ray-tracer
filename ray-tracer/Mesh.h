@@ -28,22 +28,31 @@ class Mesh : public Intersectable<Renderable>, public Renderable
 {
 public:
    Mesh(vector<Intersectable<Renderable> *> *triangles, material mat, mat4 transform);
+   Mesh(mat4 transform);
+   void AddChild(Mesh *child);
+   void AddChildren(vector<Mesh *> *children);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
+   virtual intersect_info<Renderable> SafeIntersect(ray cast);
    virtual bounding_box Bounds() { return tree->Bounds(); };
-   
+
    virtual inline vec3 Normal(vec3 contact);
    virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light);
-   virtual inline material Material() { return mat; };
+   virtual inline material Material() { return triangle->Material(); };
    
 private:
+   inline mat4 Transform();
+   
    Octree *tree;
+   vector<Mesh *> *children;
 
    mat4 transform;
    mat4 inverseTranspose;
    
    material mat;
    Renderable *triangle;
+   
+   Mesh *lastHit;
 };
 
 #endif /* defined(__ray_tracer__Mesh__) */

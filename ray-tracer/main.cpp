@@ -13,6 +13,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Parser.h"
+
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -303,26 +305,24 @@ int main(int argc, const char * argv[])
    int width = 1280;
    int height = 720;
    
-   vector<Intersectable<Renderable> *> *objects = new vector<Intersectable<Renderable> *>();
-   vector<AbstractLight *> *lights = new vector<AbstractLight *>();
    Camera *camera;
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("/Users/bryanbell/Dropbox/Homework/ART384/LavaLamp.dae",
+   const aiScene *aScene = importer.ReadFile("/Volumes/Macintosh HD/Documents/Strictly Business/Cal Poly '13/Senior Project/Maya Files/Hierarchy.dae",
                                             aiProcess_CalcTangentSpace       |
                                             aiProcess_Triangulate            |
-                                            aiProcess_JoinIdenticalVertices  |
                                             aiProcess_SortByPType);
    
-   get_assimp_objects(aScene, objects, lights, &camera);
-   //TestTransformScene(aScene, objects, lights, &camera);
+   Parser *parser = new Parser(aScene);
+   camera = parser->Camera();
    camera->SetWidth(width);
    camera->SetHeight(height);
+   camera->SetAntiAliasing(2);
    
-   Scene *scene = Scene::CreateScene(objects, lights, camera);
+   Scene *scene = Scene::CreateScene(parser->Meshes(), parser->Lights(), camera);
    scene->SetBackgroundColor(color(1.0f, 1.0f, 1.0f));
    
-   color ** image = scene->TraceScene();
+   color **image = scene->TraceScene();
    
    Image *output = new Image(width, height);
    

@@ -19,6 +19,7 @@
 		C3A3930118ABFBB200107D89 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930018ABFBB200107D89 /* main.cpp */; };
 		C3A3930318ABFBB200107D89 /* ray_tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C3A3930218ABFBB200107D89 /* ray_tracer.1 */; };
 		C3A3930D18AD31F400107D89 /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930B18AD31F400107D89 /* Triangle.cpp */; };
+		C3BC0DC218ED03B200F8FE18 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3BC0DC018ED03B200F8FE18 /* Parser.cpp */; };
 		C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E5219918AC0C68005419C4 /* Scene.cpp */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,8 @@
 		C3A3930918AD30F900107D89 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libassimp.a; sourceTree = "<group>"; };
 		C3A3930B18AD31F400107D89 /* Triangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Triangle.cpp; sourceTree = "<group>"; };
 		C3A3930C18AD31F400107D89 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
+		C3BC0DC018ED03B200F8FE18 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
+		C3BC0DC118ED03B200F8FE18 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		C3E5219918AC0C68005419C4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		C3E5219A18AC0C68005419C4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -156,7 +159,7 @@
 		C3A392FF18ABFBB200107D89 /* ray-tracer */ = {
 			isa = PBXGroup;
 			children = (
-				C3A3930918AD30F900107D89 /* libassimp.a */,
+				C3BC0DBF18ED039A00F8FE18 /* Assimp */,
 				C39516E318ACD76B0018AC32 /* Shaders */,
 				C39516DF18ACC7E00018AC32 /* Intersectables */,
 				C39516DB18ACC1C50018AC32 /* Lights */,
@@ -174,6 +177,16 @@
 				C3A3930218ABFBB200107D89 /* ray_tracer.1 */,
 			);
 			path = "ray-tracer";
+			sourceTree = "<group>";
+		};
+		C3BC0DBF18ED039A00F8FE18 /* Assimp */ = {
+			isa = PBXGroup;
+			children = (
+				C3A3930918AD30F900107D89 /* libassimp.a */,
+				C3BC0DC018ED03B200F8FE18 /* Parser.cpp */,
+				C3BC0DC118ED03B200F8FE18 /* Parser.h */,
+			);
+			name = Assimp;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,6 +244,7 @@
 				C39516C018AC5C1F0018AC32 /* TestTraceable.cpp in Sources */,
 				C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */,
 				C3A3930D18AD31F400107D89 /* Triangle.cpp in Sources */,
+				C3BC0DC218ED03B200F8FE18 /* Parser.cpp in Sources */,
 				C39516E918ACDA530018AC32 /* PhongShader.cpp in Sources */,
 				C39516DE18ACC1D80018AC32 /* PointLight.cpp in Sources */,
 				C39516E218ACC8180018AC32 /* Sphere.cpp in Sources */,

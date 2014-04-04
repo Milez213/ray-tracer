@@ -78,6 +78,52 @@ intersect_info<Renderable> Sphere::Intersect(ray cast)
 	return hit;
 }
 
+intersect_info<Renderable> Sphere::SafeIntersect(ray cast)
+{
+   intersect_info<Renderable> hit;
+   
+   ray transformed = cast.transform_ray(inverseTranspose);
+   
+	float a = dot(transformed.direction, transformed.direction);
+	float b = 2.0f * dot(transformed.origin - position, transformed.direction);
+	float c = dot(transformed.origin - position, transformed.origin - position) - powf(radius, 2.0f);
+	
+	float discriminant = powf(b, 2) - 4 * a * c;
+	
+	if (discriminant >= 0.0f) {
+		discriminant = sqrt(discriminant);
+		float q;
+		
+		if (b < 0.0f)
+        	q = -(b - discriminant)/2.0f;
+    	else
+        	q = -(b + discriminant)/2.0f;
+      
+      float t0 = q / a;
+    	float t1 = c / q;
+    	
+    	if (t0 > t1)
+      {
+	      float temp = t0;
+	      t0 = t1;
+	      t1 = temp;
+	   }
+      
+	   if (t0 < 0.0f)
+      {
+	      hit.object = this;
+         hit.time = t1;
+	   }
+      else if (t1 > 0.0f)
+      {
+	      hit.object = this;
+         hit.time = t0;
+	   }
+	}
+	
+	return hit;
+}
+
 vec3 Sphere::Normal(vec3 contact)
 {
    vec3 transformedContact = transform_point(contact, inverseTranspose);

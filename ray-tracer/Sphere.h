@@ -23,6 +23,7 @@ public:
    Sphere(vec3 center, float rad, material mtr, mat4 trans);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
+   virtual intersect_info<Renderable> SafeIntersect(ray cast);
    virtual inline bounding_box Bounds() { return bounds; };
    
    virtual inline vec3 Normal(vec3 contact);

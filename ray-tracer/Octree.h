@@ -233,6 +233,7 @@ public:
    Octree(vector<Intersectable<Renderable> *> *objects);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
+   virtual intersect_info<Renderable> SafeIntersect(ray cast);
    virtual bounding_box Bounds() { return bounding_box(); };
    
 private:

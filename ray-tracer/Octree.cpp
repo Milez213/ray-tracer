@@ -42,3 +42,10 @@ intersect_info<Renderable> Octree::Intersect(ray cast)
    
    return info;
 }
+
+intersect_info<Renderable> Octree::SafeIntersect(ray cast)
+{
+   intersect_info<Renderable> info = root.intersect(cast);
+   
+   return info;
+}

@@ -172,7 +172,7 @@ float Scene::IsPointShadowed(vec3 contact, AbstractLight *light)
       
       for (int i = 0; i < objects->size(); i++)
       {
-         info = objects->at(i)->Intersect(cast);
+         info = objects->at(i)->SafeIntersect(cast);
          
          if (info.time > 0.0f && info.time < time)
          {

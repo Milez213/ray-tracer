@@ -19,7 +19,7 @@ Camera::Camera(vec3 e, vec3 l, vec3 u)
    antialiasing = 1;
 }
 
-#define ZOOM 0.6f
+#define ZOOM 1.0f
 ray ***Camera::CastRays() const
 {
    ray ***cast = (ray ***)malloc(sizeof(ray **) * width);

@@ -311,6 +311,31 @@ intersect_info<Renderable> Triangle::Intersect(ray cast)
    return info;
 }
 
+intersect_info<Renderable> Triangle::SafeIntersect(ray cast)
+{
+   intersect_info<Renderable> info = intersect_info<Renderable>(NULL, MISS);
+   
+   vec3 edge1 = p2 - p1;
+   vec3 edge2 = p3 - p1;
+   vec3 origin = cast.origin - p1;
+   
+   //Commonly used cross products are only calculated once (substitutions)
+   vec3 sub1 = cross(cast.direction, edge2);
+   vec3 sub2 = cross(origin, edge1);
+   
+   vec3 final = (1 / dot(sub1, edge1)) * vec3(dot(sub2, edge2),
+                                              dot(sub1, origin),
+                                              dot(sub2, cast.direction));
+   
+   if (final.y >= 0.0f && final.z >= 0.0f && final.y + final.z <= 1.0f && final.x > 0.0f)
+   {
+      info.object = this;
+      info.time = final.x;
+   }
+   
+   return info;
+}
+
 vec3 Triangle::Normal(vec3 contact)
 {
    vec3 p1p2, p1p3, p2p3, p1x, p2x;

@@ -22,6 +22,7 @@ public:
             vec3 n1, vec3 n2, vec3 n3, material mater);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
+   virtual intersect_info<Renderable> SafeIntersect(ray cast);
    virtual bounding_box Bounds() { return bounds; };
    
    virtual inline vec3 Normal(vec3 contact);

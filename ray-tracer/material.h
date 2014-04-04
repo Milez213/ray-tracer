@@ -84,9 +84,9 @@ struct material
    
    inline material()
    {
-      diffuse = color(0.0f, 0.7f, 0.0f);
-      specular = color(0.5f);
-      ambient = color(0.0f, 0.15f, 0.0f);
+      diffuse = color(0.0f, 0.3f, 0.0f);
+      specular = color();
+      ambient = color();
       emissive = color();
       roughness = 0.1f; // Cannot be zero
       reflectivity = 0.0f;
