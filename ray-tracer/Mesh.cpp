@@ -101,6 +101,7 @@ intersect_info<Renderable> Mesh::Intersect(ray cast)
 intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
 {
    ray transformed = cast.transform_ray(inverse(transform));
+   Renderable *object;
    float time = INF;
    
    intersect_info<Renderable> info;
@@ -110,6 +111,7 @@ intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
       info = tree->Intersect(transformed);
       if (info.object != NULL)
       {
+         object = info.object;
          time = info.time;
       }
    }
@@ -119,11 +121,12 @@ intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
       info = mesh->Intersect(transformed);
       if (info.object != NULL && info.time < time)
       {
+         object = info.object;
          time = info.time;
       }
    }
    
-   return intersect_info<Renderable>(this, time);
+   return intersect_info<Renderable>(object, time);
 }
 
 color Mesh::Shade(vec3 contact, vec3 cam, const AbstractLight *light)

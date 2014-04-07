@@ -34,6 +34,12 @@
 
 #include "Renderable.h"
 
+#define NUM_FRAMES 48
+#define FRAMES_PER_SECOND 24
+
+#define FRAME_PREFIX "output"
+#define FRAME_EXTENSION ".tga"
+
 using namespace glm;
 using namespace std;
 
@@ -302,40 +308,48 @@ int TestTransformScene(const aiScene *scene,
 
 int main(int argc, const char * argv[])
 {
-   int width = 1280;
-   int height = 720;
+   int width = 640;
+   int height = 480;
    
    Camera *camera;
+   char *frameName = (char *)calloc(sizeof(char), string(FRAME_PREFIX).length() + 4 + string(FRAME_EXTENSION).length());
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("/Volumes/Macintosh HD/Documents/Strictly Business/Cal Poly '13/Senior Project/Maya Files/Hierarchy.dae",
-                                            aiProcess_CalcTangentSpace       |
-                                            aiProcess_Triangulate            |
-                                            aiProcess_SortByPType);
+   const aiScene *aScene = importer.ReadFile("/Volumes/Macintosh HD/Documents/Strictly Business/Cal Poly '13/Senior Project/Maya Files/AnimationDemo.dae",
+                                            aiProcess_Triangulate);
    
    Parser *parser = new Parser(aScene);
    camera = parser->Camera();
-   camera->SetWidth(width);
-   camera->SetHeight(height);
-   camera->SetAntiAliasing(2);
    
    Scene *scene = Scene::CreateScene(parser->Meshes(), parser->Lights(), camera);
    scene->SetBackgroundColor(color(1.0f, 1.0f, 1.0f));
    
-   color **image = scene->TraceScene();
-   
    Image *output = new Image(width, height);
    
-   for (int i = 0; i < width; i++)
+   for (int i = 0; i < NUM_FRAMES; i++)
    {
-      for (int j = 0; j < height; j++)
+      parser->UpdateScene((float)i / (float)FRAMES_PER_SECOND);
+      camera->SetWidth(width);
+      camera->SetHeight(height);
+      camera->SetAntiAliasing(2);
+      
+      sprintf(frameName, "%s%03d%s", FRAME_PREFIX, i, FRAME_EXTENSION);
+      color **image = scene->TraceScene();
+      
+      for (int i = 0; i < width; i++)
       {
-         color_t pxl = color_t(image[i][j].r, image[i][j].g, image[i][j].b, 1.0f);
-         output->pixel(i, j, pxl);
+         for (int j = 0; j < height; j++)
+         {
+            color_t pxl = color_t(image[i][j].r, image[i][j].g, image[i][j].b, 1.0f);
+            output->pixel(i, j, pxl);
+         }
       }
+      
+      output->WriteTga(frameName);
+      
+      printf("100\%\n");
    }
    
-   output->WriteTga("output.tga");
    return 0;
 }
 

@@ -26,12 +26,14 @@ class Parser
 public:
    Parser(const aiScene *scene);
    
+   void UpdateScene(float time);
+   
    vector<Intersectable<Renderable> *> *Meshes() { return (vector<Intersectable<Renderable> *> *)meshes; };
    vector<AbstractLight *> *Lights() { return lights; };
    Camera *Camera() { return camera; };
    
 private:
-   vector<Mesh *> *NavigateNode(aiNode *node);
+   vector<Mesh *> *NavigateNode(aiNode *node, float time);
    
    const aiScene *scene;
    
