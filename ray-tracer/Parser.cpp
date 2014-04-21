@@ -79,10 +79,6 @@ void Parser::NavigateNode(aiNode *node)
    /* If this node is animated, calculate the change to the transformation for this node */
    if (nodeAnim)
    {
-      /*if (node->mName == aiString("Translate"))
-      {
-         cout << "Transforming Translate Node" << endl;
-      }*/
       transform = transform * TranslateNode(nodeAnim);
       transform = transform * ScaleNode(nodeAnim);
       transform = transform * RotateNode(nodeAnim);
@@ -197,20 +193,33 @@ material Parser::ParseMaterial(aiMaterial *mat)
 {
    material parsed = material(); // The material parsed from
    
+   int model; // Key representing the shading model which should be used
    aiColor3D diff(0.0f, 0.0f, 0.0f); // The diffuse color of the mesh
    aiColor3D spec(0.0f, 0.0f, 0.0f); // The specular color of the mesh
    aiColor3D ambt(0.0f, 0.0f, 0.0f); // The ambient color of the mesh
    float opac; // The opacity of the mesh
+   
    
    /* extract the properties from the aiMaterial and put them into the material struct */
    aiReturn prop = mat->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
    prop = mat->Get(AI_MATKEY_COLOR_SPECULAR, spec);
    prop = mat->Get(AI_MATKEY_COLOR_AMBIENT, ambt);
    prop = mat->Get(AI_MATKEY_OPACITY, opac);
+   prop = mat->Get(AI_MATKEY_SHADING_MODEL, model);
    parsed.diffuse = color(diff.r, diff.g, diff.b);
    parsed.specular = color(spec.r, spec.g, spec.b);
    parsed.ambient = color(ambt.r, ambt.g, ambt.b);
-   parsed.opacity = opac;
+   parsed.opacity = 1.0f;
+   
+   if (model == aiShadingMode_Gouraud)
+   {
+      parsed.specular = color();
+      parsed.reflectivity = 0.0f;
+   }
+   else
+   {
+      parsed.reflectivity = 0.1f;
+   }
    
    return parsed;
 }

@@ -14,7 +14,7 @@ Mesh::Mesh(vector<Intersectable<Renderable> *> *tris, material mater, mat4 trans
 {
    tree = new Octree(tris);
    transform = trans;
-   inverseTranspose = inverse(transpose(trans));
+   invers = inverse(trans);
    mat = mater;
    
    triangle = NULL;
@@ -27,15 +27,15 @@ vec3 Mesh::Normal(vec3 contact)
    vec3 transformedContact;
    vec3 transformedNormal;
    
-   transformedContact = transform_point(contact, inverse(transform));
-   transformedNormal = transform_normal(triangle->Normal(transformedContact), inverse(transform));
+   transformedContact = transform_point(contact, invers);
+   transformedNormal = transform_normal(triangle->Normal(transformedContact), transform);
    
    return transformedNormal;
 }
 
 intersect_info<Renderable> Mesh::Intersect(ray cast)
 {
-   ray transformed = cast.transform_ray(inverse(transform));
+   ray transformed = cast.transform_ray(invers);
    float time = INF;
    
    intersect_info<Renderable> info;
@@ -55,7 +55,7 @@ intersect_info<Renderable> Mesh::Intersect(ray cast)
 
 intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
 {
-   ray transformed = cast.transform_ray(inverse(transform));
+   ray transformed = cast.transform_ray(invers);
    Renderable *object = NULL;
    float time = INF;
    

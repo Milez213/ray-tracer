@@ -166,14 +166,14 @@ color Scene::CalculateColor(ray cast, vec3 contact, Renderable *object, int dept
        * reached the maximum number of indirect lighting bounces, proceed */
       if (reflectedRatio > 0.0f && depth <= indirectLightingBounces) {
          reflected = cast.reflect_ray(contact, normal);
-         calculated += TraceRay(reflected, depth+1);
+         calculated += TraceRay(reflected, depth+1) * reflectedRatio;
       }
       
       /* If the color is determined by refracted color, and we haven't
        * reached the maximum number of indirect lighting bounces, proceed */
       if (refractedRatio > 0.0f && depth <= indirectLightingBounces) {
          refracted = cast.refract_ray(contact, normal, object->Material().indexOfRefraction, 1.0f); // FIX THIS!!!
-         calculated += TraceRay(refracted, depth+1);
+         calculated += TraceRay(refracted, depth+1) * refractedRatio;
       }
    }
    

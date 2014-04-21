@@ -47,7 +47,7 @@ private:
    Octree *tree;
 
    mat4 transform;
-   mat4 inverseTranspose;
+   mat4 invers;
    
    material mat;
    Renderable *triangle;
