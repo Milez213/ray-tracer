@@ -8,6 +8,8 @@
 
 #include "Mesh.h"
 
+#include "PhongShader.h"
+
 Mesh::Mesh(vector<Intersectable<Renderable> *> *tris, material mater, mat4 trans)
 {
    tree = new Octree(tris);
@@ -16,7 +18,8 @@ Mesh::Mesh(vector<Intersectable<Renderable> *> *tris, material mater, mat4 trans
    mat = mater;
    
    triangle = NULL;
-   lastHit = NULL;
+   
+   SetShader(PhongShader::GetInstance());
 }
 
 vec3 Mesh::Normal(vec3 contact)
@@ -44,7 +47,6 @@ intersect_info<Renderable> Mesh::Intersect(ray cast)
       {
          triangle = info.object;
          time = info.time;
-         lastHit = NULL;
       }
    }
    
@@ -70,38 +72,5 @@ intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
    }
    
    return intersect_info<Renderable>(object, time);
-}
-
-color Mesh::Shade(vec3 contact, vec3 cam, const AbstractLight *light)
-{
-   color shade;
-   material triMat = triangle->Material();
-	
-	vec3 normal = Normal(contact);
-	normal = normalize(normal);
-   
-	vec3 lightDirection = light->GetDirection(contact);
-   
-	float dirNor = dot(lightDirection, normal);
-   if (dirNor < 0.0f)
-   {
-      dirNor = 0.0f;
-   }
-	
-	shade += light->Intensity(contact, normal) * triMat.diffuse * dirNor;
-	
-	vec3 cameraDirection = normalize(cam - contact);
-	vec3 difference = normalize(lightDirection + cameraDirection);
-	
-	float difNor = dot(difference, normal);
-   if (difNor < 0.0f)
-   {
-      difNor = 0.0f;
-   }
-	
-	shade += light->Intensity(contact, normal) * pow(difNor, 1.0f/triMat.roughness) * triMat.specular;
-   
-	return shade;
-
 }
 

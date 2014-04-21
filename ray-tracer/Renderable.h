@@ -12,6 +12,7 @@
 #include "glm/glm.hpp"
 
 #include "AbstractLight.h"
+#include "AbstractShader.h"
 #include "Camera.h"
 
 #include "material.h"
@@ -29,6 +30,13 @@ public:
    virtual vec3 Normal(vec3 contact) = 0;
    
    /**
+    * \brief Returns the material of the renderable
+    *
+    * \return The material of the renderable
+    */
+   virtual material Material() = 0;
+   
+   /**
     * \brief Calculates the color at the given point using the position of the
     *        camera and the light
     *
@@ -38,14 +46,25 @@ public:
     * \param light [in] The light being used to calculate the color
     * \return The color at the given point on the Renderable
     */
-   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light) = 0;
+   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light)
+   {
+      color shade;
+      
+      vec3 normal = Normal(contact);
+      normal = normalize(normal);
+      
+      shade = shader->Shade(contact, normal, cam, Material(), light);
+      
+      return shade;
+   }
    
-   /**
-    * \brief Returns the material of the renderable
-    *
-    * \return The material of the renderable
-    */
-   virtual material Material() = 0;
+   void SetShader(AbstractShader *shdr)
+   {
+      shader = shdr;
+   }
+   
+private:
+   AbstractShader *shader;
 };
 
 

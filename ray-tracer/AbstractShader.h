@@ -19,8 +19,8 @@
 class AbstractShader
 {
 public:
-   static color Shade(vec3 contact, vec3 normal, vec3 cam,
-                       const AbstractLight *light);
+   virtual color Shade(vec3 contact, vec3 normal, vec3 cam,
+                       material mat, const AbstractLight *light) = 0;
 };
 
 #endif /* defined(__ray_tracer__AbstractShader__) */

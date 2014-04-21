@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "material.h"
+#include "AbstractShader.h"
 
 #include "Renderable.h"
 #include "Intersectable.h"
@@ -29,12 +30,15 @@ class Mesh : public Intersectable<Renderable>, public Renderable
 public:
    Mesh(vector<Intersectable<Renderable> *> *triangles, material mat, mat4 transform);
    
+#pragma mark Intersectable Overrides
+   
    virtual intersect_info<Renderable> Intersect(ray cast);
    virtual intersect_info<Renderable> SafeIntersect(ray cast);
    virtual bounding_box Bounds() { return tree->Bounds(); };
+   
+#pragma mark Renderable Overrides
 
    virtual inline vec3 Normal(vec3 contact);
-   virtual color Shade(vec3 contact, vec3 cam, const AbstractLight *light);
    virtual inline material Material() { return triangle->Material(); };
    
 private:
@@ -47,8 +51,6 @@ private:
    
    material mat;
    Renderable *triangle;
-   
-   Mesh *lastHit;
 };
 
 #endif /* defined(__ray_tracer__Mesh__) */

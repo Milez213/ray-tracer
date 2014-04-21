@@ -16,8 +16,14 @@
 class PhongShader : public AbstractShader
 {
 public:
-   static color Shade(vec3 contact, vec3 normal, vec3 cam,
-                       const AbstractLight *light);
+   static PhongShader *GetInstance();
+   virtual color Shade(vec3 contact, vec3 normal, vec3 cam,
+                       material mat, const AbstractLight *light);
+   
+private:
+   PhongShader() {};
+   
+   static PhongShader *instance;
 };
 
 #endif /* defined(__ray_tracer__PhongShader__) */
