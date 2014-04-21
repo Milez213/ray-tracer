@@ -22,6 +22,7 @@ class Camera
 public:
    Camera(vec3 eye, vec3 lookAt, vec3 up);
    ray ***CastRays() const;
+   void CleanUpRays(ray ***cast) const;
    
    inline vec3 Position() const { return eye; };
    

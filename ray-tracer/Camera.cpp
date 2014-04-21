@@ -19,7 +19,6 @@ Camera::Camera(vec3 e, vec3 l, vec3 u)
    antialiasing = 1;
 }
 
-#define ZOOM 1.0f
 ray ***Camera::CastRays() const
 {
    ray ***cast = (ray ***)malloc(sizeof(ray **) * width);
@@ -56,7 +55,7 @@ ray ***Camera::CastRays() const
                u = normalize(cross(w, up));
                v = normalize(cross(u, w));
                
-               direction = normalize(ZOOM * w + xRayPosition * u + yRayPosition * v);
+               direction = normalize(w + xRayPosition * u + yRayPosition * v);
                
                cast[i][j][x * antialiasing + y] = ray(eye, direction);
             }
@@ -66,4 +65,17 @@ ray ***Camera::CastRays() const
    }
    
    return cast;
+}
+
+void Camera::CleanUpRays(ray ***cast) const
+{
+   for (int i = 0; i < width; i++)
+   {
+      for (int j = 0; j < height; j++)
+      {
+         free(cast[i][j]);
+      }
+      free(cast[i]);
+   }
+   free(cast);
 }
