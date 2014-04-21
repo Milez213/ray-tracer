@@ -16,32 +16,7 @@ Mesh::Mesh(vector<Intersectable<Renderable> *> *tris, material mater, mat4 trans
    mat = mater;
    
    triangle = NULL;
-   children = new vector<Mesh *>();
    lastHit = NULL;
-}
-
-Mesh::Mesh(mat4 trans)
-{
-   tree = NULL;
-   transform = trans;
-   inverseTranspose = inverse(transpose(trans));
-   
-   triangle = NULL;
-   children = new vector<Mesh *>();
-   lastHit = NULL;
-}
-
-void Mesh::AddChild(Mesh *child)
-{
-   children->push_back(child);
-}
-
-void Mesh::AddChildren(vector<Mesh *> *child)
-{
-   for (Mesh *mesh : *child)
-   {
-      children->push_back(mesh);
-   }
 }
 
 vec3 Mesh::Normal(vec3 contact)
@@ -73,23 +48,13 @@ intersect_info<Renderable> Mesh::Intersect(ray cast)
       }
    }
    
-   for (Mesh *mesh : *children)
-   {
-      info = mesh->Intersect(transformed);
-      if (info.object != NULL && info.time < time)
-      {
-         triangle = info.object;
-         time = info.time;
-      }
-   }
-   
    return intersect_info<Renderable>(this, time);
 }
 
 intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
 {
    ray transformed = cast.transform_ray(inverse(transform));
-   Renderable *object;
+   Renderable *object = NULL;
    float time = INF;
    
    intersect_info<Renderable> info;
@@ -98,16 +63,6 @@ intersect_info<Renderable> Mesh::SafeIntersect(ray cast)
    {
       info = tree->Intersect(transformed);
       if (info.object != NULL)
-      {
-         object = info.object;
-         time = info.time;
-      }
-   }
-   
-   for (Mesh *mesh : *children)
-   {
-      info = mesh->Intersect(transformed);
-      if (info.object != NULL && info.time < time)
       {
          object = info.object;
          time = info.time;

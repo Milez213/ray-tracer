@@ -28,9 +28,6 @@ class Mesh : public Intersectable<Renderable>, public Renderable
 {
 public:
    Mesh(vector<Intersectable<Renderable> *> *triangles, material mat, mat4 transform);
-   Mesh(mat4 transform);
-   void AddChild(Mesh *child);
-   void AddChildren(vector<Mesh *> *children);
    
    virtual intersect_info<Renderable> Intersect(ray cast);
    virtual intersect_info<Renderable> SafeIntersect(ray cast);
@@ -44,7 +41,6 @@ private:
    inline mat4 Transform() { return transform; };
    
    Octree *tree;
-   vector<Mesh *> *children;
 
    mat4 transform;
    mat4 inverseTranspose;
