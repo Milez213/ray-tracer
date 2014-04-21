@@ -19,7 +19,8 @@
 		C3A3930318ABFBB200107D89 /* ray_tracer.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C3A3930218ABFBB200107D89 /* ray_tracer.1 */; };
 		C3A3930D18AD31F400107D89 /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930B18AD31F400107D89 /* Triangle.cpp */; };
 		C3BC0DC218ED03B200F8FE18 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3BC0DC018ED03B200F8FE18 /* Parser.cpp */; };
-		C3BDE44418F1BF2600C1ACAF /* libassimpd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDE44318F1BF2600C1ACAF /* libassimpd.dylib */; };
+		C3DE0BF318FE3B6100115218 /* MeshTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3DE0BF118FE3B6100115218 /* MeshTriangle.cpp */; };
+		C3DE0BF71901DDBD00115218 /* libassimp.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */; };
 		C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E5219918AC0C68005419C4 /* Scene.cpp */; };
 /* End PBXBuildFile section */
 
@@ -67,7 +68,9 @@
 		C3A3930C18AD31F400107D89 /* Triangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Triangle.h; sourceTree = "<group>"; };
 		C3BC0DC018ED03B200F8FE18 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		C3BC0DC118ED03B200F8FE18 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
-		C3BDE44318F1BF2600C1ACAF /* libassimpd.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimpd.dylib; path = "ray-tracer/libassimpd.dylib"; sourceTree = "<group>"; };
+		C3DE0BF118FE3B6100115218 /* MeshTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshTriangle.cpp; sourceTree = "<group>"; };
+		C3DE0BF218FE3B6100115218 /* MeshTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshTriangle.h; sourceTree = "<group>"; };
+		C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.dylib; path = "ray-tracer/libassimp.3.dylib"; sourceTree = "<group>"; };
 		C3E5219918AC0C68005419C4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		C3E5219A18AC0C68005419C4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3BDE44418F1BF2600C1ACAF /* libassimpd.dylib in Frameworks */,
+				C3DE0BF71901DDBD00115218 /* libassimp.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +116,8 @@
 				C39516B618AC2A0A0018AC32 /* Intersectable.h */,
 				C39516E018ACC8180018AC32 /* Sphere.cpp */,
 				C39516E118ACC8180018AC32 /* Sphere.h */,
+				C3DE0BF118FE3B6100115218 /* MeshTriangle.cpp */,
+				C3DE0BF218FE3B6100115218 /* MeshTriangle.h */,
 				C3A3930B18AD31F400107D89 /* Triangle.cpp */,
 				C3A3930C18AD31F400107D89 /* Triangle.h */,
 			);
@@ -141,7 +146,7 @@
 		C3A392F418ABFBB200107D89 = {
 			isa = PBXGroup;
 			children = (
-				C3BDE44318F1BF2600C1ACAF /* libassimpd.dylib */,
+				C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */,
 				C3A392FF18ABFBB200107D89 /* ray-tracer */,
 				C3A392FE18ABFBB200107D89 /* Products */,
 			);
@@ -249,6 +254,7 @@
 				C3A3930118ABFBB200107D89 /* main.cpp in Sources */,
 				C39516DA18AC898B0018AC32 /* Image.cpp in Sources */,
 				C39516ED18ACE45C0018AC32 /* Octree.cpp in Sources */,
+				C3DE0BF318FE3B6100115218 /* MeshTriangle.cpp in Sources */,
 				C39E9F9E18AD481100C3FDDA /* Mesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,7 +265,7 @@
 		C3A3930418ABFBB200107D89 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -296,7 +302,7 @@
 		C3A3930518ABFBB200107D89 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -336,12 +342,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Volumes/Macintosh,
-					HD/Documents/Strictly,
-					Business/Cal,
-					Poly,
-					13/Senior,
-					"Project/ray-tracer/ray-tracer",
 					/opt/local/lib,
 					/usr/local/lib,
 					"$(PROJECT_DIR)/ray-tracer",
@@ -362,12 +362,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Volumes/Macintosh,
-					HD/Documents/Strictly,
-					Business/Cal,
-					Poly,
-					13/Senior,
-					"Project/ray-tracer/ray-tracer",
 					/opt/local/lib,
 					/usr/local/lib,
 					"$(PROJECT_DIR)/ray-tracer",

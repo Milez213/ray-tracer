@@ -13,7 +13,7 @@
 
 #define MISS -1
 #define INF 10000.0f
-#define STEP 0.001f
+#define STEP 0.01f
 
 using namespace glm;
 

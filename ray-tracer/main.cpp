@@ -34,7 +34,7 @@
 
 #include "Renderable.h"
 
-#define NUM_FRAMES 48
+#define NUM_FRAMES 70
 #define FRAMES_PER_SECOND 24
 
 #define FRAME_PREFIX "output"
@@ -308,14 +308,14 @@ int TestTransformScene(const aiScene *scene,
 
 int main(int argc, const char * argv[])
 {
-   int width = 640;
-   int height = 480;
+   int width = 1920;
+   int height = 1080;
    
    Camera *camera;
    char *frameName = (char *)calloc(sizeof(char), string(FRAME_PREFIX).length() + 4 + string(FRAME_EXTENSION).length());
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("/Volumes/Macintosh HD/Documents/Strictly Business/Cal Poly '13/Senior Project/Maya Files/AnimationDemo.dae",
+   const aiScene *aScene = importer.ReadFile("ART-474/scenes/collada/bouncingBall.dae",
                                             aiProcess_Triangulate);
    
    Parser *parser = new Parser(aScene);
@@ -328,6 +328,8 @@ int main(int argc, const char * argv[])
    
    for (int i = 0; i < NUM_FRAMES; i++)
    {
+      cout << "Starting Frame " << i << endl;
+      
       parser->UpdateScene((float)i / (float)FRAMES_PER_SECOND);
       camera->SetWidth(width);
       camera->SetHeight(height);
@@ -347,9 +349,9 @@ int main(int argc, const char * argv[])
       
       output->WriteTga(frameName);
       
-      printf("100\%\n");
+      cout << "100%" << endl;
    }
    
    return 0;
 }
-
+ 

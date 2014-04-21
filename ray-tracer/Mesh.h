@@ -41,7 +41,7 @@ public:
    virtual inline material Material() { return triangle->Material(); };
    
 private:
-   inline mat4 Transform();
+   inline mat4 Transform() { return transform; };
    
    Octree *tree;
    vector<Mesh *> *children;

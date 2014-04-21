@@ -44,25 +44,13 @@ void Mesh::AddChildren(vector<Mesh *> *child)
    }
 }
 
-mat4 Mesh::Transform()
-{
-   mat4 trans = transform;
-   
-   if (lastHit != NULL)
-   {
-      trans = lastHit->Transform() * trans;
-   }
-   
-   return trans;
-}
-
 vec3 Mesh::Normal(vec3 contact)
 {
    vec3 transformedContact;
    vec3 transformedNormal;
    
-   transformedContact = transform_point(contact, inverse(Transform()));
-   transformedNormal = transform_normal(triangle->Normal(transformedContact), inverse(Transform()));
+   transformedContact = transform_point(contact, inverse(transform));
+   transformedNormal = transform_normal(triangle->Normal(transformedContact), inverse(transform));
    
    return transformedNormal;
 }
