@@ -102,30 +102,72 @@ public:
    
 private:
    /**
-    * \brief Private constructor to maintain the 
+    * \brief Private constructor to maintain the singleton nature of the Scene
     *
-    * \return The meshes being traced by the scene
+    * \param objects [in] The meshes rendered in the scene
+    * \param lights [in] The lights in the scene
+    * \param camera [in] The camera which the scene is traced from
     */
    Scene(const vector<Intersectable<Renderable> *> *objects,
          const vector<AbstractLight *> *lights,
          const Camera *camera);
    
+   /**
+    * \brief Traces a single ray through the scene, and returns the color 
+    *        gathered by that ray
+    *
+    * \param cast [in] The ray which is traced through the scene
+    * \param depth [in] The number of interactions with the scene the ray has
+    *        already had
+    * \return The color gathered by the ray
+    */
    color TraceRay(ray cast, int depth);
+   
+   /**
+    * \brief Calculates the color of the contacted object at the given contact
+    *        point
+    *
+    * \param cast [in] The ray which hit the given object
+    * \param contact [in] The point at which the given object was contacted
+    * \param object [in] The object to be used to calculate the color
+    * \param depth [in] The number of interactions with the scene the ray
+    *        already had
+    * \return The color calculated at the given point on the given object
+    */
    color CalculateColor(ray cast, vec3 contact, Renderable *object, int depth);
+   
+   /**
+    * \brief Casts rays used for monte-carlo ray tracing into the scene from the
+    *        given contact point
+    * \param contact [in] The point from which the rays will be cast
+    * \param normal [in] The normal around which the indirect rays will be cast
+    * \param depth [in] The number of interactions with the scene the ray
+    *        already had
+    * \return The average color gathered from the indirect rays
+    */
    color CastIndirectRays(vec3 contact, vec3 normal, int depth);
    
+   /**
+    * \brief Determines whether the given point is in shadow, and how dark the
+    *        the shadowing is at that point
+    *
+    * \param contact [in] The point which may be in shadow
+    * \param light [in] The light which may be obscured from the point
+    * \return A percentage, represented as a float, of how much of the light is
+    *         obscured
+    */
    float IsPointShadowed(vec3 contact, AbstractLight *light);
    
-   static Scene *instance;
+   static Scene *instance; // The single instance of the scene
    
-   const vector<AbstractLight *> *lights;
-   const vector<Intersectable<Renderable> *> *objects;
-   const Camera *camera;
+   const vector<AbstractLight *> *lights; // The lights in the given scene
+   const vector<Intersectable<Renderable> *> *objects; // The objects in the given scene
+   const Camera *camera; // The camera which the scene is rendered from
    
-   color background;
+   color background; // The color used when no objects are intersected
    
-   int indirectLightingBounces;
-   int indirectRays;
+   int indirectLightingBounces; // The number of indirect lighting bounces allowed
+   int indirectRays; // The number of indirect rays cast when monte-carlo ray-tracing is calculated
 };
 
 #endif /* defined(__ray_tracer__Scene__) */
