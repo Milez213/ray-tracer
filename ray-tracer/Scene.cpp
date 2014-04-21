@@ -78,6 +78,8 @@ color **Scene::TraceScene()
       }
    }
    
+   camera->CleanUpRays(cast);
+   
    return pixels;
 }
 
