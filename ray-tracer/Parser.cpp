@@ -154,6 +154,11 @@ Mesh *Parser::ParseMesh(aiMesh *mesh)
    aiVector3D *norms = mesh->mNormals; // The normals for the vertices
    vector<Intersectable<Renderable> *> meshTriangles; // The vector describing the faces of the mesh
    
+   if (mesh->HasBones())
+   {
+      ParseBones(verts, mesh->mBones, mesh->mNumBones);
+   }
+   
    /* For each face create a triangle and add it to meshTriangles */
    for (int j = 0; j < mesh->mNumFaces; j++) {
       aiFace face = mesh->mFaces[j]; // The current face
@@ -222,6 +227,46 @@ material Parser::ParseMaterial(aiMaterial *mat)
    }
    
    return parsed;
+}
+
+void Parser::ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones)
+{
+   aiBone *currentBone; // The current bone in the array being transformed
+   aiVertexWeight currentVertex; // The current vertex being affected
+   unsigned int numVertices; // The number of vertices the current bone affects
+   mat4 boneTransform; // The transform described by the current bone
+   vec4 tempVertex; // Holds a representation of the current vertex which can be transformed by glm calls
+   
+   /* Iterate through all bones, and apply their transformation to the affected
+    * vertices */
+   for (int i = 0; i < numBones; i++)
+   {
+      currentBone = bones[i];
+      numVertices = currentBone->mNumWeights;
+      boneTransform = mat4(currentBone->mOffsetMatrix.a1, currentBone->mOffsetMatrix.a2,
+                           currentBone->mOffsetMatrix.a3, currentBone->mOffsetMatrix.a4,
+                           currentBone->mOffsetMatrix.b1, currentBone->mOffsetMatrix.b2,
+                           currentBone->mOffsetMatrix.b3, currentBone->mOffsetMatrix.b4,
+                           currentBone->mOffsetMatrix.c1, currentBone->mOffsetMatrix.c2,
+                           currentBone->mOffsetMatrix.c3, currentBone->mOffsetMatrix.c4,
+                           currentBone->mOffsetMatrix.d1, currentBone->mOffsetMatrix.d2,
+                           currentBone->mOffsetMatrix.d3, currentBone->mOffsetMatrix.d4);
+      
+      /* Iterate through all affected vertices, applying the bones transformation
+       * to them */
+      for (int j = 0; j < numVertices; j++)
+      {
+         currentVertex = currentBone->mWeights[j];
+         tempVertex = vec4(verts[currentVertex.mVertexId].x,
+                           verts[currentVertex.mVertexId].y,
+                           verts[currentVertex.mVertexId].z, 1.0f);
+         tempVertex = tempVertex * (boneTransform * currentVertex.mWeight);
+         
+         verts[currentVertex.mVertexId].x = tempVertex.x;
+         verts[currentVertex.mVertexId].y = tempVertex.y;
+         verts[currentVertex.mVertexId].z = tempVertex.z;
+      }
+   }
 }
 
 mat4 Parser::TranslateNode(aiNodeAnim *node)

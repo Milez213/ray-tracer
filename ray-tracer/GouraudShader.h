@@ -1,13 +1,13 @@
 //
-//  PhongShader.h
+//  GouraudShader.h
 //  ray-tracer
 //
 //  Created by Bryan Bell on 2/13/14.
 //  Copyright (c) 2014 Bryan Bell. All rights reserved.
 //
 
-#ifndef __ray_tracer__PhongShader__
-#define __ray_tracer__PhongShader__
+#ifndef __ray_tracer__GouraudShader__
+#define __ray_tracer__GouraudShader__
 
 #include <iostream>
 
@@ -26,4 +26,4 @@ private:
    static GouraudShader *instance;
 };
 
-#endif /* defined(__ray_tracer__PhongShader__) */
+#endif /* defined(__ray_tracer__GouraudShader__) */

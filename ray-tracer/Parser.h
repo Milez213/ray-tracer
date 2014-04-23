@@ -88,6 +88,16 @@ private:
    material ParseMaterial(aiMaterial *material);
    
    /**
+    * \brief Parses the given array of aiBones and applies them to the given 
+    *        array of vertices
+    *
+    * \param verts [in/out] The vertices being modified by the bone structures
+    * \param bones [in] The bones used to modify the given array of vertices
+    * \param numBones [in] The number of bones in the mesh
+    */
+   void ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones);
+   
+   /**
     * \brief Translates the node given the key frames stored in the given node, and the given time.
     *
     * \param node [in] The node animation information.

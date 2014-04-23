@@ -1,5 +1,5 @@
 //
-//  PhongShader.cpp
+//  GouraudShader.cpp
 //  ray-tracer
 //
 //  Created by Bryan Bell on 2/13/14.
