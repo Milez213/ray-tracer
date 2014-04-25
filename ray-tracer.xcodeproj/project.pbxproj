@@ -20,8 +20,8 @@
 		C3A3930D18AD31F400107D89 /* Triangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A3930B18AD31F400107D89 /* Triangle.cpp */; };
 		C3BC0DC218ED03B200F8FE18 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3BC0DC018ED03B200F8FE18 /* Parser.cpp */; };
 		C3DE0BF318FE3B6100115218 /* MeshTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3DE0BF118FE3B6100115218 /* MeshTriangle.cpp */; };
-		C3DE0BF71901DDBD00115218 /* libassimp.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */; };
 		C3DE0BFA1904C96200115218 /* GouraudShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3DE0BF81904C96200115218 /* GouraudShader.cpp */; };
+		C3DE0BFC1909D73000115218 /* libassimpd.3.0.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3DE0BFB1909D73000115218 /* libassimpd.3.0.1.dylib */; };
 		C3E5219B18AC0C68005419C4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E5219918AC0C68005419C4 /* Scene.cpp */; };
 /* End PBXBuildFile section */
 
@@ -71,9 +71,9 @@
 		C3BC0DC118ED03B200F8FE18 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		C3DE0BF118FE3B6100115218 /* MeshTriangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshTriangle.cpp; sourceTree = "<group>"; };
 		C3DE0BF218FE3B6100115218 /* MeshTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshTriangle.h; sourceTree = "<group>"; };
-		C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.dylib; path = "ray-tracer/libassimp.3.dylib"; sourceTree = "<group>"; };
 		C3DE0BF81904C96200115218 /* GouraudShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GouraudShader.cpp; sourceTree = "<group>"; };
 		C3DE0BF91904C96200115218 /* GouraudShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GouraudShader.h; sourceTree = "<group>"; };
+		C3DE0BFB1909D73000115218 /* libassimpd.3.0.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimpd.3.0.1.dylib; path = "ray-tracer/libassimpd.3.0.1.dylib"; sourceTree = "<group>"; };
 		C3E5219918AC0C68005419C4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		C3E5219A18AC0C68005419C4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,7 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3DE0BF71901DDBD00115218 /* libassimp.3.dylib in Frameworks */,
+				C3DE0BFC1909D73000115218 /* libassimpd.3.0.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +151,7 @@
 		C3A392F418ABFBB200107D89 = {
 			isa = PBXGroup;
 			children = (
-				C3DE0BF61901DDBD00115218 /* libassimp.3.dylib */,
+				C3DE0BFB1909D73000115218 /* libassimpd.3.0.1.dylib */,
 				C3A392FF18ABFBB200107D89 /* ray-tracer */,
 				C3A392FE18ABFBB200107D89 /* Products */,
 			);

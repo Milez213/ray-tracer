@@ -55,6 +55,15 @@ struct color
       return *this;
    }
    
+   inline color& operator*=(color col)
+   {
+      this->r *= col.r;
+      this->g *= col.g;
+      this->b *= col.b;
+      
+      return *this;
+   }
+   
    inline color operator*(float modify)
    {
       return color(modify * r, modify * g, modify * b);
@@ -76,11 +85,11 @@ struct material
    color specular;
    color ambient;
    color emissive;
-   float roughness;
    float reflectivity;
    float refractivity;
    float indexOfRefraction;
    float opacity;
+   float shininess;
    
    inline material()
    {
@@ -88,26 +97,26 @@ struct material
       specular = color();
       ambient = color();
       emissive = color();
-      roughness = 0.1f; // Cannot be zero
       reflectivity = 0.0f;
       refractivity = 0.0f;
       indexOfRefraction = 1.0f;
       opacity = 1.0f;
+      shininess = 1.0f;
    }
    
    inline material(color diff, color spec, color ambt, color emis,
                    float rough, float reflect, float refract,
-                   float ior, float opac)
+                   float ior, float opac, float shin)
    {
       diffuse = diff;
       specular = spec;
       ambient = ambt;
       emissive = emis;
-      roughness = rough;
       reflectivity = reflect;
       refractivity = refract;
       indexOfRefraction = ior;
       opacity = opac;
+      shininess = shin;
    }
 };
 

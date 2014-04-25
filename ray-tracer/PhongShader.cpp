@@ -43,7 +43,7 @@ color PhongShader::Shade(vec3 contact, vec3 normal, vec3 cam, material mat, cons
       difNor = 0.0f;
    }
 	
-	shade += light->Intensity(contact, normal) * pow(difNor, 1.0f/mat.roughness) * mat.specular;
+	shade += light->Intensity(contact, normal) * pow(difNor, mat.shininess) * mat.specular;
    
 	return shade;
    

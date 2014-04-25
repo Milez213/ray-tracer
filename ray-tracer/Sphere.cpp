@@ -157,7 +157,7 @@ color Sphere::Shade(vec3 contact, vec3 cam, const AbstractLight *light)
       difNor = 0.0f;
    }
 	
-	shade += light->Intensity(contact, normal) * pow(difNor, 1.0f/mat.roughness) * mat.specular;
+	shade += light->Intensity(contact, normal) * pow(difNor, 1.0f/mat.shininess) * mat.specular;
    
 	return shade;
 }

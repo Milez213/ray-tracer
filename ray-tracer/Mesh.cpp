@@ -28,7 +28,7 @@ vec3 Mesh::Normal(vec3 contact)
    vec3 transformedNormal;
    
    transformedContact = transform_point(contact, invers);
-   transformedNormal = transform_normal(triangle->Normal(transformedContact), transform);
+   transformedNormal = transform_normal(triangle->Normal(transformedContact), transpose(transform));
    
    return transformedNormal;
 }

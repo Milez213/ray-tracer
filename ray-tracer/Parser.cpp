@@ -154,6 +154,9 @@ Mesh *Parser::ParseMesh(aiMesh *mesh)
    aiVector3D *norms = mesh->mNormals; // The normals for the vertices
    vector<Intersectable<Renderable> *> meshTriangles; // The vector describing the faces of the mesh
    
+   aiMaterial *mater = scene->mMaterials[mesh->mMaterialIndex]; // The material associated with the mesh
+   mat = ParseMaterial(mater);
+   
    if (mesh->HasBones())
    {
       ParseBones(verts, mesh->mBones, mesh->mNumBones);
@@ -164,27 +167,26 @@ Mesh *Parser::ParseMesh(aiMesh *mesh)
       aiFace face = mesh->mFaces[j]; // The current face
       
       /* If the given face has enough vertices to form a triangle, add it */
-      if (face.mNumIndices >= 3) {
-         aiMaterial *mater = scene->mMaterials[mesh->mMaterialIndex]; // The material associated with the mesh
-         mat = ParseMaterial(mater);
-         Triangle *tri = new Triangle(vec3(verts[face.mIndices[0]].x,
-                                           verts[face.mIndices[0]].y,
-                                           verts[face.mIndices[0]].z),
-                                      vec3(verts[face.mIndices[1]].x,
-                                           verts[face.mIndices[1]].y,
-                                           verts[face.mIndices[1]].z),
-                                      vec3(verts[face.mIndices[2]].x,
-                                           verts[face.mIndices[2]].y,
-                                           verts[face.mIndices[2]].z),
-                                      vec3(norms[face.mIndices[0]].x,
-                                           norms[face.mIndices[0]].y,
-                                           norms[face.mIndices[0]].z),
-                                      vec3(norms[face.mIndices[1]].x,
-                                           norms[face.mIndices[1]].y,
-                                           norms[face.mIndices[1]].z),
-                                      vec3(norms[face.mIndices[2]].x,
-                                           norms[face.mIndices[2]].y,
-                                           norms[face.mIndices[2]].z),
+      for (int k = 0; k + 2 < face.mNumIndices; k++)
+      {
+         Triangle *tri = new Triangle(vec3(verts[face.mIndices[k]].x,
+                                           verts[face.mIndices[k]].y,
+                                           verts[face.mIndices[k]].z),
+                                      vec3(verts[face.mIndices[k+1]].x,
+                                           verts[face.mIndices[k+1]].y,
+                                           verts[face.mIndices[k+1]].z),
+                                      vec3(verts[face.mIndices[k+2]].x,
+                                           verts[face.mIndices[k+2]].y,
+                                           verts[face.mIndices[k+2]].z),
+                                      vec3(norms[face.mIndices[k]].x,
+                                           norms[face.mIndices[k]].y,
+                                           norms[face.mIndices[k]].z),
+                                      vec3(norms[face.mIndices[k+1]].x,
+                                           norms[face.mIndices[k+1]].y,
+                                           norms[face.mIndices[k+1]].z),
+                                      vec3(norms[face.mIndices[k+2]].x,
+                                           norms[face.mIndices[k+2]].y,
+                                           norms[face.mIndices[k+2]].z),
                                       mat);
          meshTriangles.push_back(tri);
       }
@@ -203,6 +205,8 @@ material Parser::ParseMaterial(aiMaterial *mat)
    aiColor3D spec(0.0f, 0.0f, 0.0f); // The specular color of the mesh
    aiColor3D ambt(0.0f, 0.0f, 0.0f); // The ambient color of the mesh
    float opac; // The opacity of the mesh
+   float refl; // The reflectiveness of the mesh
+   float shin; // The shininess of the mesh
    
    
    /* extract the properties from the aiMaterial and put them into the material struct */
@@ -211,10 +215,13 @@ material Parser::ParseMaterial(aiMaterial *mat)
    prop = mat->Get(AI_MATKEY_COLOR_AMBIENT, ambt);
    prop = mat->Get(AI_MATKEY_OPACITY, opac);
    prop = mat->Get(AI_MATKEY_SHADING_MODEL, model);
+   prop = mat->Get(AI_MATKEY_REFLECTIVITY, refl);
+   prop = mat->Get(AI_MATKEY_SHININESS, shin);
    parsed.diffuse = color(diff.r, diff.g, diff.b);
    parsed.specular = color(spec.r, spec.g, spec.b);
    parsed.ambient = color(ambt.r, ambt.g, ambt.b);
    parsed.opacity = 1.0f;
+   parsed.shininess = shin;
    
    if (model == aiShadingMode_Gouraud)
    {
@@ -223,7 +230,7 @@ material Parser::ParseMaterial(aiMaterial *mat)
    }
    else
    {
-      parsed.reflectivity = 0.1f;
+      parsed.reflectivity = refl;
    }
    
    return parsed;

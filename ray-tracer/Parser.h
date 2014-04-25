@@ -2,6 +2,9 @@
 //  Parser.h
 //  ray-tracer
 //
+//  Parser parses a given aiScene object into lists of contained meshes and lights, as well as the
+//  the camera used to trace the scene.
+//
 //  Created by Bryan Bell on 4/2/14.
 //  Copyright (c) 2014 Bryan Bell. All rights reserved.
 //

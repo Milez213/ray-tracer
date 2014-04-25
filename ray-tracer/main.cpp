@@ -23,7 +23,7 @@
 #include "Renderable.h"
 #include "Intersectable.h"
 
-#define NUM_FRAMES 70
+#define NUM_FRAMES 1
 #define FRAMES_PER_SECOND 24
 
 #define FRAME_PREFIX "output"
@@ -33,21 +33,24 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-   int width = 1920;
-   int height = 1080;
+   int width = 1280;
+   int height = 720;
    
    Camera *camera;
    char *frameName = (char *)calloc(sizeof(char), string(FRAME_PREFIX).length() + 4 + string(FRAME_EXTENSION).length());
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("ART-474/scenes/collada/bouncingBall.dae",
-                                            aiProcess_Triangulate);
+   const aiScene *aScene = importer.ReadFile("ART-474/scenes/collada/lightingDemo.dae",
+                                             aiProcess_Triangulate
+                                             | aiProcess_SortByPType
+                                             | aiProcess_JoinIdenticalVertices);
    
    Parser *parser = new Parser(aScene);
    camera = parser->Camera();
    
    Scene *scene = Scene::CreateScene(parser->Meshes(), parser->Lights(), camera);
    scene->SetBackgroundColor(color(1.0f, 1.0f, 1.0f));
+   scene->SetIndirectLightingBounces(3);
    
    Image *output = new Image(width, height);
    
@@ -58,7 +61,7 @@ int main(int argc, const char * argv[])
       parser->UpdateScene((float)i / (float)FRAMES_PER_SECOND);
       camera->SetWidth(width);
       camera->SetHeight(height);
-      camera->SetAntiAliasing(2);
+      camera->SetAntiAliasing(1);
       
       sprintf(frameName, "%s%03d%s", FRAME_PREFIX, i, FRAME_EXTENSION);
       color **image = scene->TraceScene();
