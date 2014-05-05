@@ -24,14 +24,14 @@ using namespace std;
 using namespace glm;
 
 #define NUM_CHILDREN 8
-#define MAX_OBJECTS 100
+#define MAX_OBJECTS 200
 
 struct octree_node
 {
    octree_node *children;
    Intersectable<Renderable> **objects;
    
-   short numObjects;
+   unsigned short numObjects;
    
    bounding_box bounds;
    
@@ -88,23 +88,37 @@ struct octree_node
          
          int index;
          
+         bool passed[MAX_OBJECTS];
+         
+         for (int i = 0; i < MAX_OBJECTS; i++)
+         {
+            passed[i] = false;
+         }
+         
+         //cout << "This Min: (" << bounds.minimum.x << ", " << bounds.minimum.y << ", " << bounds.minimum.z << ")" << endl;
+         //cout << "This Max: (" << bounds.maximum.x << ", " << bounds.maximum.y << ", " << bounds.maximum.z << ")" << endl;
+         
          for (int x = 0; x < 2; x++)
          {
             for (int y = 0; y < 2; y++)
             {
                for (int z = 0; z < 2; z++)
                {
-                  oMin = vec3(bounds.minimum + octant * vec3(x, y, z));
+                  oMin = bounds.minimum + vec3(octant.x * x, octant.y * y, octant.z * z);
                   oMax = oMin + octant;
                   
                   index = x * 4 + y * 2 + z;
                   children[index] = octree_node(bounding_box(vec3(oMin), vec3(oMax)));
+                  
+                  //cout << "   Child " << index << " Min: (" << children[index].bounds.minimum.x << ", " << children[index].bounds.minimum.y << ", " << children[index].bounds.minimum.z << ")" << endl;
+                  //cout << "   Child " << index << " Max: (" << children[index].bounds.maximum.x << ", " << children[index].bounds.maximum.y << ", " << children[index].bounds.maximum.z << ")" << endl;
                   
                   for (int i = 0; i < MAX_OBJECTS; i++)
                   {
                      if (children[index].bounds.intersects(objects[i]->Bounds()))
                      {
                         children[index].add(objects[i]);
+                        passed[i] = true;
                      }
                   }
                   
@@ -115,6 +129,17 @@ struct octree_node
                }
             }
          }
+         
+         /*for (int i = 0; i < MAX_OBJECTS; i++)
+         {
+            if (!passed[i])
+            {
+               cout << "An object was not passed down:" << endl;
+               cout << "   Min: (" << objects[i]->Bounds().minimum.x << ", " << objects[i]->Bounds().minimum.y << ", " << objects[i]->Bounds().minimum.z << ")" << endl;
+               cout << "   Max: (" << objects[i]->Bounds().maximum.x << ", " << objects[i]->Bounds().maximum.y << ", " << objects[i]->Bounds().maximum.z << ")" << endl;
+               
+            }
+         }*/
          
          numObjects = 0;
          delete[] objects;

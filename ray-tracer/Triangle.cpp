@@ -157,11 +157,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
    p2 = c2;
    p3 = c3;
    
-   if (p1.x < p2.x && p1.x < p3.x)
+   if (p1.x <= p2.x && p1.x <= p3.x)
    {
       min.x = p1.x;
       
-      if (p2.x < p3.x)
+      if (p2.x <= p3.x)
       {
          max.x = p3.x;
       }
@@ -170,11 +170,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
          max.x = p2.x;
       }
    }
-   else if (p2.x < p1.x && p2.x < p3.x)
+   else if (p2.x <= p1.x && p2.x <= p3.x)
    {
       min.x = p2.x;
       
-      if (p1.x < p3.x)
+      if (p1.x <= p3.x)
       {
          max.x = p3.x;
       }
@@ -187,7 +187,7 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
    {
       min.x = p3.x;
       
-      if (p1.x < p2.x)
+      if (p1.x <= p2.x)
       {
          max.x = p2.x;
       }
@@ -197,11 +197,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
       }
    }
    
-   if (p1.y < p2.y && p1.y < p3.y)
+   if (p1.y <= p2.y && p1.y <= p3.y)
    {
       min.y = p1.y;
       
-      if (p2.y < p3.y)
+      if (p2.y <= p3.y)
       {
          max.y = p3.y;
       }
@@ -210,11 +210,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
          max.y = p2.y;
       }
    }
-   else if (p2.y < p1.y && p2.y < p3.y)
+   else if (p2.y <= p1.y && p2.y <= p3.y)
    {
       min.y = p2.y;
       
-      if (p1.y < p3.y)
+      if (p1.y <= p3.y)
       {
          max.y = p3.y;
       }
@@ -227,7 +227,7 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
    {
       min.y = p3.y;
       
-      if (p1.y < p2.y)
+      if (p1.y <= p2.y)
       {
          max.y = p2.y;
       }
@@ -237,11 +237,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
       }
    }
    
-   if (p1.z < p2.z && p1.z < p3.z)
+   if (p1.z <= p2.z && p1.z <= p3.z)
    {
       min.z = p1.z;
       
-      if (p2.z < p3.z)
+      if (p2.z <= p3.z)
       {
          max.z = p3.z;
       }
@@ -250,11 +250,11 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
          max.z = p2.z;
       }
    }
-   else if (p2.z < p1.z && p2.z < p3.z)
+   else if (p2.z <= p1.z && p2.z <= p3.z)
    {
       min.z = p2.z;
       
-      if (p1.z < p3.z)
+      if (p1.z <= p3.z)
       {
          max.z = p3.z;
       }
@@ -267,7 +267,7 @@ Triangle::Triangle(vec3 c1, vec3 c2, vec3 c3,
    {
       min.z = p3.z;
       
-      if (p1.z < p2.z)
+      if (p1.z <= p2.z)
       {
          max.z = p2.z;
       }
