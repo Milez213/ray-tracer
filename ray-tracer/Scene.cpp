@@ -137,7 +137,7 @@ color Scene::CalculateColor(ray cast, vec3 contact, Renderable *object, int dept
    
    float reflectedRatio = object->Material().reflectivity; // The percent of the color which should be determined from reflected color
    float refractedRatio = object->Material().refractivity; // The percent of the color which should be determined from refracted color
-   float shadedRatio = 1.0f; // The percent of the color which should be determined by shading the object
+   float shadedRatio = 1.0f - (reflectedRatio + refractedRatio); // The percent of the color which should be determined by shading the object
    
    AbstractLight *light; // The temporary holder for the light to be used to calculate the shadowing and color
    float shadowed; // The percentage which the given point which is obscured from light sources
@@ -150,34 +150,32 @@ color Scene::CalculateColor(ray cast, vec3 contact, Renderable *object, int dept
    
    for (int i = 0; i < lights->size(); i++)
    {
-      color temp = color(1.0f); // The color at the given point for the current light
+      color shadedColor; // The base shading of the object
+      color reflectedColor; // The reflected color of the object
+      color refractedColor; // The refracted color of the object
       light = lights->at(i); // The light to be tested for shadowing
       normal = object->Normal(contact); // The normal at the given point
       shadowPoint = contact + (normal * STEP); // The point adjusted to avoid self shadowing
       
       shadowed = IsPointShadowed(shadowPoint, light); // Determine how much the point is in shadow
       
-      /* If the color is determined by shading the object, and we haven't 
-       * reached the maximum number of indirect lighting bounces, proceed */
-      if (shadedRatio > 0.0f && depth <= indirectLightingBounces) {
-         temp *= (object->Shade(contact, cast.origin, light) + CastIndirectRays(contact, normal, depth)) * shadowed;
+      /* If we haven't reached the maximum number of indirect lighting bounces, proceed */
+      if (depth <= indirectLightingBounces) {
+         shadedColor = (object->Shade(contact, cast.origin, light) + CastIndirectRays(contact, normal, depth)) * shadowed;
+         
+         if (reflectedRatio > 0.01f)
+         {
+            reflected = cast.reflect_ray(contact, normal);
+            reflectedColor = shadedColor * TraceRay(reflected, depth+1);
+         }
+         
+         if (refractedRatio > 0.01f)
+         {
+            refractedColor = shadedColor * TraceRay(refracted, depth+1);
+         }
       }
       
-      /* If the color is determined by reflected color, and we haven't
-       * reached the maximum number of indirect lighting bounces, proceed */
-      if (reflectedRatio > 0.0f && depth <= indirectLightingBounces) {
-         reflected = cast.reflect_ray(contact, normal);
-         temp *= TraceRay(reflected, depth+1) * reflectedRatio;
-      }
-      
-      /* If the color is determined by refracted color, and we haven't
-       * reached the maximum number of indirect lighting bounces, proceed */
-      if (refractedRatio > 0.0f && depth <= indirectLightingBounces) {
-         refracted = cast.refract_ray(contact, normal, object->Material().indexOfRefraction, 1.0f); // FIX THIS!!!
-         temp *= TraceRay(refracted, depth+1) * refractedRatio;
-      }
-      
-      calculated += temp;
+      calculated += shadedColor * shadedRatio + reflectedColor * reflectedRatio + refractedColor * refractedRatio;
    }
    
    /* Add in ambient and emmissive color */
