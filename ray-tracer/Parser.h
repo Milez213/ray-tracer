@@ -29,18 +29,21 @@ class Parser
 {
 public:
    /**
-    * \brief Constructs the Parser for use with a given scene. Initializes all class variables, and traverses
-    *        the given scene's tree at time 0.0f.
+    * \brief Constructs the Parser for use with a given scene. Initializes all 
+    *        class variables, and traverses the given scene's tree at time 0.0f.
     *
     * \param scene [in] The scene to be parsed.
-    * \return A constructed Parser containing information concerning the given scene.
+    * \return A constructed Parser containing information concerning the given 
+    *         scene.
     */
    Parser(const aiScene *scene);
    
    /**
-    * \brief Traverses the given scene's tree at the given time. Reevaluating all meshes, lights, and cameras.
+    * \brief Traverses the given scene's tree at the given time. Reevaluating 
+    *        all meshes, lights, and cameras.
     *
-    * \param time [in] The time at which to use when calculating animation transformations.
+    * \param time [in] The time at which to use when calculating animation 
+    *        transformations.
     */
    void UpdateScene(double time);
    
@@ -78,31 +81,39 @@ private:
     * \brief Gets the transformations for all nodes in the hierarchy
     *
     * \param node [in] The node being traversed
-    * \param parent [in] The bone_node which will be used as the parent for any child bones contained
+    * \param parent [in] The bone_node which will be used as the parent for any 
+    *        child bones contained
     */
    void ParseTransformations(aiNode *node, bone_node *parent);
    
    /**
-    * \brief Traverses the given node and its children, adding any meshes they contain to the meshes vector, adding any lights they
-    *        contain to the lights vector, and setting the camera if they contain it.
+    * \brief Traverses the given node and its children, adding any meshes they 
+    *        contain to the meshes vector, adding any lights they contain to the 
+    *        lights vector, and setting the camera if they contain it.
     *
     * \param node [in] The current node in the scene hierarchy.
     */
    void NavigateNode(aiNode *node);
    
    /**
-    * \brief Parses the given instance of aiMesh and returns a Mesh object which can be used by ray-tracer
+    * \brief Parses the given instance of aiMesh and returns a Mesh object which
+    *        can be used by ray-tracer
     *
     * \param mesh [in] The aiMesh to be parsed for the creation of a Mesh object
-    * \return A Mesh with the contents of the given aiMesh which can be used by ray-tracer
+    * \param transform [in] The matrix to transform the mesh by
+    * \return A Mesh with the contents of the given aiMesh which can be used by 
+    *         ray-tracer
     */
-   Mesh *ParseMesh(aiMesh *mesh);
+   Mesh *ParseMesh(aiMesh *mesh, mat4 transform);
    
    /**
-    * \brief Parses the given instance of aiMaterial and returns a material struct which can be used by ray-tracer
+    * \brief Parses the given instance of aiMaterial and returns a material 
+    *        struct which can be used by ray-tracer
     *
-    * \param material [in] The aiMaterial to be parsed for the creation of a material struct
-    * \return A material with the contents of the given aiMaterial which can be used by ray-tracer
+    * \param material [in] The aiMaterial to be parsed for the creation of a 
+    *        material struct
+    * \return A material with the contents of the given aiMaterial which can be 
+    *         used by ray-tracer
     */
    material ParseMaterial(aiMaterial *material);
    
@@ -110,58 +121,95 @@ private:
     * \brief Parses the given array of aiBones and applies them to the given 
     *        array of vertices
     *
-    * \param verts [in] The vertices being modified by the bone structures
+    * \param vertices [in/out] The vertices being modified by the bone structures
+    * \param normals [in/out] The normals being bodified by the bone structures
     * \param bones [in] The bones used to modify the given array of vertices
     * \param numBones [in] The number of bones in the mesh
     * \param numVertices [in] The number of vertices affected
-    *
-    * \return The transformed vertices
     */
-   vector<vec3> *ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones, unsigned int numVertices);
+   void ParseBones(vector<vec3> *vertices, vector<vec3> *normals,
+                            aiBone** bones, unsigned int numBones,
+                            unsigned int numVertices);
    
    /**
-    * \brief Translates the node given the key frames stored in the given node, and the given time.
+    * \brief Translates the node given the key frames stored in the given node, 
+    *        and the given time.
     *
     * \param node [in] The node animation information.
-    * \return A matrix describing the transformation given by applying the current time to the animation information.
+    * \return A matrix describing the transformation given by applying the 
+    *         current time to the animation information.
     */
    mat4 TranslateNode(aiNodeAnim *node);
    
    /**
-    * \brief Scales the node given the key frames stored in the given node, and the given time.
+    * \brief Scales the node given the key frames stored in the given node, and 
+    *        the given time.
     *
     * \param node [in] The node animation information.
-    * \return A matrix describing the transformation given by applying the current time to the animation information.
+    * \return A matrix describing the transformation given by applying the 
+    *         current time to the animation information.
     */
    mat4 ScaleNode(aiNodeAnim *node);
    
    /**
-    * \brief Rotates the node given the key frames stored in the given node, and the given time.
+    * \brief Rotates the node given the key frames stored in the given node, and
+    *        the given time.
     *
     * \param node [in] The node animation information.
-    * \return A matrix describing the transformation given by applying the current time to the animation information.
+    * \return A matrix describing the transformation given by applying the 
+    *         current time to the animation information.
     */
    mat4 RotateNode(aiNodeAnim *node);
    
    /**
-    * \brief Multiplies the transformations in the transformStack together to get the total transformation at the current node
+    * \brief Multiplies the transformations in the transformStack together to 
+    *        get the total transformation at the current node
     *
-    * \return A transformation describing the total transformation up to the current node.
+    * \return A transformation describing the total transformation up to the 
+    *         current node.
     */
    mat4 Transform();
    
+   /**
+    * \brief The store for all the scene information
+    */
+   const aiScene *scene;
    
-   const aiScene *scene; // The store for all the scene information
-   aiScene *currentScene; // Transformable scene, allows for editing of meshes/nodes
-   double time; // The time to use in determining any animation transforms
+   /**
+    * \brief The time to use in determining any animation transforms
+    */
+   double time;
    
-   vector<mat4> *transformStack; // The stack of transforms determined by traversing the scene hierarchy
-   unordered_map<string, mat4> *nodeTransforms; // The transformations for each node in the hierarchy
-   unordered_map<string, bone_node *> *meshBones; // The bones in the given scene and their transformations
+   /**
+    * \brief The stack of transforms determined by traversing the scene 
+    *        hierarchy 
+    */
+   vector<mat4> *transformStack;
    
-   vector<Mesh *> *meshes; // The meshes parsed from the scene
-   vector<AbstractLight *> *lights; // The lights parsed from the scene
-   class Camera *camera; // The camera found in the scene
+   /**
+    * \brief The transformations for each node in the hierarchy 
+    */
+   unordered_map<string, mat4> *nodeTransforms;
+   
+   /**
+    * \brief The bones in the given scene and their transformations
+    */
+   unordered_map<string, bone_node *> *meshBones;
+   
+   /**
+    * \brief The meshes parsed from the scene
+    */
+   vector<Mesh *> *meshes;
+   
+   /**
+    * \brief The lights parsed from the scene
+    */
+   vector<AbstractLight *> *lights;
+   
+   /**
+    * \brief The camera found in the scene
+    */
+   class Camera *camera;
 };
 
 #endif /* defined(__ray_tracer__Parser__) */

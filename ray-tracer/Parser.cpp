@@ -20,8 +20,7 @@
 
 Parser::Parser(const aiScene *scn)
 {
-   scene = scn; // Sets the scene to be parsed to a member of the object for ease of access
-   currentScene = new aiScene(*scn); // Copy base scene into editable one
+   scene = scn; // Makes the given scene a member of the object for easy access
    time = 0.0f; // Initialize animations to time 0 to start
    
    transformStack = new vector<mat4>(); // Initialize the transform stack
@@ -31,7 +30,7 @@ Parser::Parser(const aiScene *scn)
    lights = new vector<AbstractLight *>(); // Initialize the lights vector
    meshes = new vector<Mesh *>(); // Initialize the mesh vector
    
-   aiNode *root = scn->mRootNode; // Get the root node to start traversing the hierarchy
+   aiNode *root = scn->mRootNode; // Get the root node to start traversing at
    
    /* For each child of the root node, gather transform information */
    for (int i = 0; i < root->mNumChildren; i++)
@@ -48,9 +47,7 @@ Parser::Parser(const aiScene *scn)
 
 void Parser::UpdateScene(double t)
 {
-   currentScene = new aiScene(*scene); // Copy base scene into editable one
-   
-   aiNode *root = currentScene->mRootNode; // Get the root node so we can start traversing the hierarchy
+   aiNode *root = scene->mRootNode; // Get the root node to start traversing at
    time = t; // Set the time for animations to be resolved
    
    lights->clear(); // Empty the lights vector as it's about to be refilled
@@ -87,9 +84,9 @@ void Parser::ParseTransformations(aiNode *node, bone_node *parent)
    bone_node *child = NULL;
    
    /* Decide whether this node is animated or not */
-   for (int i = 0; i < currentScene->mNumAnimations && !nodeAnim; i++)
+   for (int i = 0; i < scene->mNumAnimations && !nodeAnim; i++)
    {
-      animation = currentScene->mAnimations[i];
+      animation = scene->mAnimations[i];
       for (int j = 0; j < animation->mNumChannels && !nodeAnim; j++)
       {
          nodeTemp = animation->mChannels[j];
@@ -100,7 +97,8 @@ void Parser::ParseTransformations(aiNode *node, bone_node *parent)
       }
    }
    
-   /* If this node is animated, calculate the change to the transformation for this node */
+   /* If this node is animated, calculate the change to the transformation for 
+    * this node */
    if (nodeAnim)
    {
       transform = transform * RotateNode(nodeAnim);
@@ -142,22 +140,34 @@ void Parser::ParseTransformations(aiNode *node, bone_node *parent)
                child->transform = transform;
             }
             
-            child->boneSpace = mat4(tempBone->mOffsetMatrix.a1, tempBone->mOffsetMatrix.a2,
-                                    tempBone->mOffsetMatrix.a3, tempBone->mOffsetMatrix.a4,
-                                    tempBone->mOffsetMatrix.b1, tempBone->mOffsetMatrix.b2,
-                                    tempBone->mOffsetMatrix.b3, tempBone->mOffsetMatrix.b4,
-                                    tempBone->mOffsetMatrix.c1, tempBone->mOffsetMatrix.c2,
-                                    tempBone->mOffsetMatrix.c3, tempBone->mOffsetMatrix.c4,
-                                    tempBone->mOffsetMatrix.d1, tempBone->mOffsetMatrix.d2,
-                                    tempBone->mOffsetMatrix.d3, tempBone->mOffsetMatrix.d4);
+            child->boneSpace = mat4(tempBone->mOffsetMatrix.a1,
+                                    tempBone->mOffsetMatrix.a2,
+                                    tempBone->mOffsetMatrix.a3,
+                                    tempBone->mOffsetMatrix.a4,
+                                    tempBone->mOffsetMatrix.b1,
+                                    tempBone->mOffsetMatrix.b2,
+                                    tempBone->mOffsetMatrix.b3,
+                                    tempBone->mOffsetMatrix.b4,
+                                    tempBone->mOffsetMatrix.c1,
+                                    tempBone->mOffsetMatrix.c2,
+                                    tempBone->mOffsetMatrix.c3,
+                                    tempBone->mOffsetMatrix.c4,
+                                    tempBone->mOffsetMatrix.d1,
+                                    tempBone->mOffsetMatrix.d2,
+                                    tempBone->mOffsetMatrix.d3,
+                                    tempBone->mOffsetMatrix.d4);
             child->parent = parent;
             
-            meshBones->insert(pair<string, bone_node *>(string(node->mName.C_Str()), child));
+            pair<string, bone_node *> bone;
+            bone = pair<string, bone_node *>(string(node->mName.C_Str()), child);
+            meshBones->insert(bone);
          }
       }
    }
    
-   nodeTransforms->insert(pair<string, mat4>(string(node->mName.C_Str()), Transform()));
+   pair<string, mat4> nodeTran;
+   nodeTran = pair<string, mat4>(string(node->mName.C_Str()), Transform());
+   nodeTransforms->insert(nodeTran);
    
    /* Now navigate through all the child nodes to collect their meshes */
    for (int i = 0; i < numChildren; i++)
@@ -165,54 +175,72 @@ void Parser::ParseTransformations(aiNode *node, bone_node *parent)
       ParseTransformations(node->mChildren[i], child);
    }
    
-   transformStack->pop_back(); // Pop the current node's transformation off the stack so it doesn't affect other nodes
+   /* Pop the current node's transformation off the stack so it doesn't affect 
+    * other nodes */
+   transformStack->pop_back();
 }
 
 void Parser::NavigateNode(aiNode *node)
 {
    int numChildren = node->mNumChildren; // The number of children this node has
    
-   std::unordered_map<string,mat4>::const_iterator got = nodeTransforms->find(string(node->mName.C_Str())); // Get transformation out of map
+   /* Get transformation out of map */
+   std::unordered_map<string,mat4>::const_iterator got;
+   got = nodeTransforms->find(string(node->mName.C_Str()));
+   
    mat4 transform = got->second; // The transformation at this node
    
-   transformStack->push_back(transform);
-   
-   /* If the node contains a mesh, it creates a Mesh object representative of it and adds it to meshes */
+   /* If the node contains a mesh, it creates a Mesh object representative of it
+    * and adds it to meshes */
    if (node->mNumMeshes > 0)
    {
-      aiMesh *mesh = currentScene->mMeshes[node->mMeshes[0]]; // The mesh of the current node
-      Mesh *myMesh = ParseMesh(mesh);
+      aiMesh *mesh = scene->mMeshes[node->mMeshes[0]]; // The mesh of the current node
+      Mesh *myMesh = ParseMesh(mesh, transform);
       meshes->push_back(myMesh);
    }
    
-   /* Loop through the list of cameras in the scene, if any of them share a name with the current node
-    * create the camera to be used by ray-tracer */
-   for (int i = 0; i < currentScene->mNumCameras; i++) {
-      aiCamera *cam = currentScene->mCameras[i]; // The camera currently being inspected
+   /* Loop through the list of cameras in the scene, if any of them share a name
+    * with the current node create the camera to be used by ray-tracer */
+   for (int i = 0; i < scene->mNumCameras; i++) {
+      aiCamera *cam = scene->mCameras[i]; // The camera currently being inspected
       
-      /* If the current camera has the same name as the current node, then a the scene camera is created
-       * with the current camera's attributes */
+      /* If the current camera has the same name as the current node, and is
+       * named <CAM_NAME>, then the scene camera is created with the current 
+       * node and camera's attributes */
       if (cam->mName == node->mName && cam->mName == aiString(CAM_NAME)) {
-         vec3 eye = transform_point(vec3(cam->mPosition.x, cam->mPosition.y, cam->mPosition.z), Transform()); // The position of the camera
-         vec3 lookAt = transform_point(vec3(cam->mLookAt.x, cam->mLookAt.y, cam->mLookAt.z), Transform()); // The focus of the camera
+         vec3 eye = transform_point(vec3(cam->mPosition.x,
+                                         cam->mPosition.y,
+                                         cam->mPosition.z),
+                                    transform); // The position of the camera
+         vec3 lookAt = transform_point(vec3(cam->mLookAt.x,
+                                            cam->mLookAt.y,
+                                            cam->mLookAt.z),
+                                       transform); // The focus of the camera
          
-         camera = new class Camera(eye, lookAt, vec3(cam->mUp.x, cam->mUp.y, cam->mUp.z));
+         camera = new class Camera(eye, lookAt, vec3(cam->mUp.x,
+                                                     cam->mUp.y,
+                                                     cam->mUp.z));
       }
    }
    
-   /* Loop through the lights in the scene, if any of them share a name with the current node
-    * create a light to be used by ray-tracer with the current attributes and transformation */
-   for (int i = 0; i < currentScene->mNumLights; i++) {
-      aiLight *lgt = currentScene->mLights[i]; // The light currently being inspected
+   /* Loop through the lights in the scene, if any of them share a name with the
+    * current node create a light to be used by ray-tracer with the current 
+    * attributes and transformation */
+   for (int i = 0; i < scene->mNumLights; i++) {
+      aiLight *lgt = scene->mLights[i]; // The light currently being inspected
       
-      /* If the current light's name and the current node's name match, add the light to the scene */
+      /* If the current light's name and the current node's name match, add the 
+       * light to the scene */
       if (lgt->mName == node->mName) {
-         vec3 pos = transform_point(vec3(lgt->mPosition.x, lgt->mPosition.y, lgt->mPosition.z), Transform());
-         color col = color(lgt->mColorDiffuse.r, lgt->mColorDiffuse.g, lgt->mColorDiffuse.b);
+         vec3 pos = transform_point(vec3(lgt->mPosition.x,
+                                         lgt->mPosition.y,
+                                         lgt->mPosition.z), transform);
+         color col = color(lgt->mColorDiffuse.r,
+                           lgt->mColorDiffuse.g,
+                           lgt->mColorDiffuse.b);
          
-         cout << "Light Color: (" << col.r << ", " << col.g << ", " << col.b << ")" << endl;
-         
-         PointLight *light = new PointLight(col, vec3(pos.x, pos.y, pos.z)); // The light to be added to the scene
+         /* The light to be added to the scene */
+         PointLight *light = new PointLight(col, vec3(pos.x, pos.y, pos.z));
          lights->push_back(light);
       }
    }
@@ -222,33 +250,42 @@ void Parser::NavigateNode(aiNode *node)
    {
       NavigateNode(node->mChildren[i]);
    }
-   
-   transformStack->pop_back(); // Pop the current node's transformation off the stack so it doesn't affect other nodes
 }
 
-Mesh *Parser::ParseMesh(aiMesh *mesh)
+Mesh *Parser::ParseMesh(aiMesh *mesh, mat4 transform)
 {
    Mesh *parsed; // The mesh parsed from the given aiMesh
    material mat; // The material of the parsed mesh
    
    aiVector3D *verts = mesh->mVertices; // The vertices that define the mesh
    aiVector3D *norms = mesh->mNormals; // The normals for the vertices
-   vector<Intersectable<Renderable> *> meshTriangles; // The vector describing the faces of the mesh
-   vector<vec3> *vertices;
+   /* The vector containing the faces of the mesh */
+   vector<Intersectable<Renderable> *> meshTriangles;
    
-   aiMaterial *mater = currentScene->mMaterials[mesh->mMaterialIndex]; // The material associated with the mesh
+   /* The vector of vertices to be transformed by bone deformations */
+   vector<vec3> *vertices;
+   vertices = new vector<vec3>(mesh->mNumVertices, vec3(0.0f));
+   for (int i = 0; i < mesh->mNumVertices; i++)
+   {
+      vertices->at(i)= vec3(verts[i].x, verts[i].y, verts[i].z);
+   }
+   
+   /* The vector of normals to be transformed by bone deformations */
+   vector<vec3> *normals;
+   normals = new vector<vec3>(mesh->mNumVertices, vec3(0.0f));
+   for (int i = 0; i < mesh->mNumVertices; i++)
+   {
+      normals->at(i)= vec3(norms[i].x, norms[i].y, norms[i].z);
+   }
+   
+   /* The mesh's material */
+   aiMaterial *mater = scene->mMaterials[mesh->mMaterialIndex];
    mat = ParseMaterial(mater);
    
    if (mesh->HasBones())
    {
-      vertices = ParseBones(verts, mesh->mBones, mesh->mNumBones, mesh->mNumVertices);
-   }
-   else
-   {
-      vertices = new vector<vec3>(mesh->mNumVertices, vec3(0.0f));
-      for (int i = 0; i < mesh->mNumVertices; i++) {
-         vertices->at(i)= vec3(verts[i].x, verts[i].y, verts[i].z);
-      }
+      ParseBones(vertices, normals,
+                 mesh->mBones, mesh->mNumBones, mesh->mNumVertices);
    }
    
    /* For each face create a triangle and add it to meshTriangles */
@@ -274,7 +311,7 @@ Mesh *Parser::ParseMesh(aiMesh *mesh)
          meshTriangles.push_back(tri);
       }
    }
-   parsed = new Mesh(&meshTriangles, mat, Transform()); // Create a mesh from the given faces
+   parsed = new Mesh(&meshTriangles, mat, transform); // Create a mesh from the given faces
    
    return parsed;
 }
@@ -292,7 +329,8 @@ material Parser::ParseMaterial(aiMaterial *mat)
    float shin; // The shininess of the mesh
    
    
-   /* extract the properties from the aiMaterial and put them into the material struct */
+   /* extract the properties from the aiMaterial and put them into the material 
+    * struct */
    aiReturn prop = mat->Get(AI_MATKEY_COLOR_DIFFUSE, diff);
    prop = mat->Get(AI_MATKEY_COLOR_SPECULAR, spec);
    prop = mat->Get(AI_MATKEY_COLOR_AMBIENT, ambt);
@@ -306,7 +344,8 @@ material Parser::ParseMaterial(aiMaterial *mat)
    parsed.opacity = 1.0f;
    parsed.shininess = shin;
    
-   //cout << "Diffuse Color: (" << parsed.diffuse.r << ", " << parsed.diffuse.g << ", " << parsed.diffuse.b << ")" << endl;
+//   cout << "Diffuse Color: (" << parsed.diffuse.r << ", "
+//   << parsed.diffuse.g << ", " << parsed.diffuse.b << ")" << endl;
    
    if (model == aiShadingMode_Gouraud)
    {
@@ -321,33 +360,47 @@ material Parser::ParseMaterial(aiMaterial *mat)
    return parsed;
 }
 
-vector<vec3> *Parser::ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones, unsigned int numVerts)
+void Parser::ParseBones(vector<vec3> *vertices, vector<vec3> *normals,
+                                 aiBone** bones, unsigned int numBones,
+                                 unsigned int numVerts)
 {
-   vector<vec3> *transformed = new vector<vec3>(numVerts, vec3(0.0f));
-   
+   /* The bone who's transformation is currently being calculated */
    aiBone *tempBone;
+   /* The node from which the bone is gotten */
    bone_node *node;
    
+   /* The index of the vertex being affected */
    aiVertexWeight tempVertex;
    
+   /* The bone space transformation and animation transformation */
    mat4 transform;
+   /* The inverse bone space transformation */
    mat4 invers;
    
+   /* The summed transformation for each vertex */
    vector<mat4> vertexTransforms;
    vertexTransforms.resize(numVerts, mat4(0.0f));
    
    for (int i = 0; i < numBones; i++)
    {
       tempBone = bones[i];
-      std::unordered_map<string, bone_node *>::const_iterator got = meshBones->find(string(tempBone->mName.C_Str())); // Get bone out of map
-      node = got->second; // The bone_node for this bone
+      
+      /* Get bone out of map */
+      std::unordered_map<string, bone_node *>::const_iterator got;
+      got = meshBones->find(string(tempBone->mName.C_Str()));
+      node = got->second;
       
       transform = mat4(1.0f);
+      /* Traverse each bone up the hierarchy (including this one), applying
+       * its bone space and animation tranformations */
       for (bone_node *bone = node; bone != NULL; bone = bone->parent)
       {
          transform =  bone->boneSpace * bone->transform * transform;
       }
       
+      /* Traverse each bone down the hierarchy (stopping at the current bone),
+       * applying the inverse bone space tranformation. (maintaining the
+       * animation transformation */
       invers = mat4(1.0f);
       for (bone_node *bone = node; bone != NULL; bone = bone->parent)
       {
@@ -361,108 +414,58 @@ vector<vec3> *Parser::ParseBones(aiVector3D *verts, aiBone** bones, unsigned int
          
          if (tempVertex.mWeight > 0)
          {
-            vertexTransforms[tempVertex.mVertexId] += (transform * invers) * tempVertex.mWeight;
+            vertexTransforms[tempVertex.mVertexId] += (transform * invers)
+            * tempVertex.mWeight;
          }
       }
    }
    
-   vec3 tempVert; // Holds a representation of the current vertex which can be transformed by glm calls
-   
-   /* Iterate through all affected vertices, applying the bone-space transformation
-    * to them */
+   /* Iterate through all affected vertices, applying the bone-space 
+    * transformation to them */
    for (int i = 0; i < numVerts; i++)
    {
-      tempVert = transform_point(vec3(verts[i].x, verts[i].y, verts[i].z), vertexTransforms[i]);
-      
-      transformed->at(i) = tempVert;
+      vertices->at(i) = transform_point(vertices->at(i), vertexTransforms[i]);
    }
    
-   return transformed;
-   
-//   aiBone *currentBone; // The current bone in the array being transformed
-//   aiVertexWeight currentVertex; // The current vertex being affected
-//   unsigned int numVertices; // The number of vertices the current bone affects
-//   mat4 boneTransform; // The transform described by the current bone
-//   vec4 tempVertex; // Holds a representation of the current vertex which can be transformed by glm calls
-//   quat tempQuat; // Temporary quaternion for rotation calculations
-//   
-//   vector<mat4> vertexTransforms;
-//   vector<mat4> vertNodeTransforms;
-//   vertexTransforms.resize(numVerts, mat4(0.0f));
-//   vertNodeTransforms.resize(numVerts, mat4(0.0f));
-//   
-//   /* Iterate through all bones, and apply their transformation to the affected
-//    * vertices */
-//   for (int i = 0; i < numBones; i++)
-//   {
-//      currentBone = bones[i];
-//      numVertices = currentBone->mNumWeights;
-//      boneTransform = mat4(currentBone->mOffsetMatrix.a1, currentBone->mOffsetMatrix.a2,
-//                           currentBone->mOffsetMatrix.a3, currentBone->mOffsetMatrix.a4,
-//                           currentBone->mOffsetMatrix.b1, currentBone->mOffsetMatrix.b2,
-//                           currentBone->mOffsetMatrix.b3, currentBone->mOffsetMatrix.b4,
-//                           currentBone->mOffsetMatrix.c1, currentBone->mOffsetMatrix.c2,
-//                           currentBone->mOffsetMatrix.c3, currentBone->mOffsetMatrix.c4,
-//                           currentBone->mOffsetMatrix.d1, currentBone->mOffsetMatrix.d2,
-//                           currentBone->mOffsetMatrix.d3, currentBone->mOffsetMatrix.d4);
-//      
-//      /* Iterate through all affected vertices, applying the bone-space transformation
-//       * to them */
-//      for (int j = 0; j < numVertices; j++)
-//      {
-//         currentVertex = currentBone->mWeights[j];
-//         
-//         if (currentVertex.mWeight > 0)
-//         {
-//            vertexTransforms[currentVertex.mVertexId] += boneTransform * currentVertex.mWeight;
-//
-//            std::unordered_map<string,mat4>::const_iterator got = nodeTransforms->find(string(currentBone->mName.C_Str())); // Get transformation out of map
-//            vertNodeTransforms[currentVertex.mVertexId] += got->second * currentVertex.mWeight;
-//         }
-//      }
-//   }
-//   
-//   /* Iterate through all affected vertices, applying the bone-space transformation
-//    * to them */
-//   for (int i = 0; i < numVerts; i++)
-//   {
-//      tempVertex = vec4(verts[i].x,
-//                        verts[i].y,
-//                        verts[i].z,
-//                        0);
-//      
-//      tempVertex = tempVertex * vertexTransforms[i];
-//      tempVertex = tempVertex * vertNodeTransforms[i];
-//      tempVertex = tempVertex * inverse(vertexTransforms[i]);
-//      verts[i].x = tempVertex.x;
-//      verts[i].y = tempVertex.y;
-//      verts[i].z = tempVertex.z;
-//   }
+   /* Iterate through all affected normals, applying the bone-space 
+    * transformation to them */
+   for (int i = 0; i < numVerts; i++)
+   {
+      normals->at(i) = transform_normal(normals->at(i), vertexTransforms[i]);
+   }
 }
 
 mat4 Parser::TranslateNode(aiNodeAnim *node)
 {
    mat4 transform = mat4(1.0f); // The matrix to be transformed and returned
    
-   float preRatio; // The portion of the transformation to be determined by the previous key frame
-   float postRatio; // The portion of the transformation to be determined by the next key frame
+   /* The portion of the transformation determined by the previous key frame */
+   float preRatio;
+   /* The portion of the transformation determined by the next key frame */
+   float postRatio;
    
-   aiVectorKey prePosition = aiVectorKey(-INF, aiVector3D()); // The translation given by the previous key frame
-   aiVectorKey postPosition = aiVectorKey(INF, aiVector3D()); // The translation given by the next key frame
+   /* The translation given by the previous key frame */
+   aiVectorKey prePosition = aiVectorKey(-INF, aiVector3D());
+   /* The translation given by the next key frame */
+   aiVectorKey postPosition = aiVectorKey(INF, aiVector3D());
    
-   /* Run through the key frames to determine which ones occur immediately before and after the given time */
+   /* Run through the key frames to determine which ones occur immediately 
+    * before and after the given time */
    for (int i = 0; i < node->mNumPositionKeys; i++)
    {
-      aiVectorKey tempPosition = node->mPositionKeys[i]; // Temporary storage for key frame candidate
+      /* Temporary storage for key frame candidate */
+      aiVectorKey tempPosition = node->mPositionKeys[i];
       
-      /* If the candidate occurs later than the current previous key while still occurring before the given time,
-       * the candidate become the new previous key. */
+      /* If the candidate occurs later than the current previous key while still 
+       * occurring before the given time, the candidate become the new previous 
+       * key. */
       if (tempPosition.mTime > prePosition.mTime && tempPosition.mTime < time)
       {
          prePosition = tempPosition;
       }
-      /* If the candidate occurs ealier than the current post key while still occurring after the given time,
-       * the candidate become the new post key. */
+      /* If the candidate occurs ealier than the current post key while still 
+       * occurring after the given time, the candidate become the new post 
+       * key. */
       else if (tempPosition.mTime < postPosition.mTime && tempPosition.mTime > time)
       {
          postPosition = tempPosition;
@@ -472,19 +475,22 @@ mat4 Parser::TranslateNode(aiNodeAnim *node)
    /* There was at least one key frame found, proceed */
    if (prePosition.mTime != -INF || postPosition.mTime != INF)
    {
-      /* If no key frames occur after the given time, the previous key gets 100% of the weight */
+      /* If no key frames occur after the given time, the previous key gets 100% 
+       * of the weight */
       if (postPosition.mTime == INF)
       {
          preRatio = 1.0f;
          postRatio = 0.0f;
       }
-      /* If no key frames occur before the given time, the post key gets 100% of the weight */
+      /* If no key frames occur before the given time, the post key gets 100% of
+       * the weight */
       else if (prePosition.mTime == -INF)
       {
          preRatio = 0.0f;
          postRatio = 1.0f;
       }
-      /* Otherwise, the weights are computed by determine the position at the given time between the two key frames */
+      /* Otherwise, the weights are computed by determine the position at the 
+       * given time between the two key frames */
       else
       {
          float difference = postPosition.mTime - prePosition.mTime;
@@ -492,11 +498,16 @@ mat4 Parser::TranslateNode(aiNodeAnim *node)
          preRatio = 1.0f - postRatio;
       }
       
-      /* The total translation is determined by mulitplying the ratios to their prospective translations and then summing them */
-      vec3 trans = vec3(prePosition.mValue.x * preRatio + postPosition.mValue.x * postRatio,
-                        prePosition.mValue.y * preRatio + postPosition.mValue.y * postRatio,
-                        prePosition.mValue.z * preRatio + postPosition.mValue.z * postRatio);
-      transform = transpose(translate(mat4(1.0f), trans)); // transform is set to the transformation matrix describing the translation
+      /* The total translation is determined by mulitplying the ratios to their 
+       * prospective translations and then summing them */
+      vec3 trans = vec3(prePosition.mValue.x * preRatio
+                        + postPosition.mValue.x * postRatio,
+                        prePosition.mValue.y * preRatio
+                        + postPosition.mValue.y * postRatio,
+                        prePosition.mValue.z * preRatio
+                        + postPosition.mValue.z * postRatio);
+      /* transform is set to the transformation matrix describing the translation */
+      transform = transpose(translate(mat4(1.0f), trans));
    }
    
    return transform;
