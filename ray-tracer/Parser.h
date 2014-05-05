@@ -13,7 +13,7 @@
 #define __ray_tracer__Parser__
 
 #include <iostream>
-#include <stack>
+#include <unordered_map>
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -42,7 +42,7 @@ public:
     *
     * \param time [in] The time at which to use when calculating animation transformations.
     */
-   void UpdateScene(float time);
+   void UpdateScene(double time);
    
    /**
     * \brief Passes back a vector containing all the meshes for the scene.
@@ -66,6 +66,22 @@ public:
    Camera *Camera() { return camera; };
    
 private:
+   struct bone_node
+   {
+      mat4 transform;
+      mat4 boneSpace;
+      
+      struct bone_node *parent;
+   };
+   
+   /**
+    * \brief Gets the transformations for all nodes in the hierarchy
+    *
+    * \param node [in] The node being traversed
+    * \param parent [in] The bone_node which will be used as the parent for any child bones contained
+    */
+   void ParseTransformations(aiNode *node, bone_node *parent);
+   
    /**
     * \brief Traverses the given node and its children, adding any meshes they contain to the meshes vector, adding any lights they
     *        contain to the lights vector, and setting the camera if they contain it.
@@ -94,11 +110,14 @@ private:
     * \brief Parses the given array of aiBones and applies them to the given 
     *        array of vertices
     *
-    * \param verts [in/out] The vertices being modified by the bone structures
+    * \param verts [in] The vertices being modified by the bone structures
     * \param bones [in] The bones used to modify the given array of vertices
     * \param numBones [in] The number of bones in the mesh
+    * \param numVertices [in] The number of vertices affected
+    *
+    * \return The transformed vertices
     */
-   void ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones);
+   vector<vec3> *ParseBones(aiVector3D *verts, aiBone** bones, unsigned int numBones, unsigned int numVertices);
    
    /**
     * \brief Translates the node given the key frames stored in the given node, and the given time.
@@ -133,9 +152,12 @@ private:
    
    
    const aiScene *scene; // The store for all the scene information
-   float time; // The time to use in determining any animation transforms
+   aiScene *currentScene; // Transformable scene, allows for editing of meshes/nodes
+   double time; // The time to use in determining any animation transforms
    
    vector<mat4> *transformStack; // The stack of transforms determined by traversing the scene hierarchy
+   unordered_map<string, mat4> *nodeTransforms; // The transformations for each node in the hierarchy
+   unordered_map<string, bone_node *> *meshBones; // The bones in the given scene and their transformations
    
    vector<Mesh *> *meshes; // The meshes parsed from the scene
    vector<AbstractLight *> *lights; // The lights parsed from the scene

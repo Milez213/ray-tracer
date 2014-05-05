@@ -23,8 +23,8 @@
 #include "Renderable.h"
 #include "Intersectable.h"
 
-#define NUM_FRAMES 1
-#define FRAMES_PER_SECOND 24
+#define NUM_FRAMES 48
+#define FRAMES_PER_SECOND 48
 
 #define FRAME_PREFIX "output"
 #define FRAME_EXTENSION ".tga"
@@ -33,17 +33,15 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-   int width = 1280;
-   int height = 720;
+   int width = 640;
+   int height = 480;
    
    Camera *camera;
    char *frameName = (char *)calloc(sizeof(char), string(FRAME_PREFIX).length() + 4 + string(FRAME_EXTENSION).length());
    
    Assimp::Importer importer;
-   const aiScene *aScene = importer.ReadFile("ART-474/scenes/collada/lightingDemo.dae",
-                                             aiProcess_Triangulate
-                                             | aiProcess_SortByPType
-                                             | aiProcess_JoinIdenticalVertices);
+   const aiScene *aScene = importer.ReadFile("ART-474/scenes/collada/boneDemo.dae",
+                                             aiProcess_Triangulate);
    
    Parser *parser = new Parser(aScene);
    camera = parser->Camera();
@@ -58,7 +56,7 @@ int main(int argc, const char * argv[])
    {
       cout << "Starting Frame " << i << endl;
       
-      parser->UpdateScene((float)i / (float)FRAMES_PER_SECOND);
+      parser->UpdateScene((double)i / (double)FRAMES_PER_SECOND);
       camera->SetWidth(width);
       camera->SetHeight(height);
       camera->SetAntiAliasing(1);
